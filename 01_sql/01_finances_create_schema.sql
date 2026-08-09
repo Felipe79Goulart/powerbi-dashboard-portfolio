@@ -7,7 +7,7 @@
 
 -- 1. Criação do usuário/schema
 CREATE USER FINANCE
-IDENTIFIED BY "Finances123";
+IDENTIFIED BY "Portfolio123";
 
 -- 2. Permite conexão ao banco
 GRANT CREATE SESSION TO FINANCE;
