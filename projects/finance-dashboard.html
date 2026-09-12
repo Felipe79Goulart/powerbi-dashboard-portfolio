@@ -647,10 +647,11 @@
         ===================================================== */
 
         .dashboard-pages-grid {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 22px;
-        }
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 26px;
+		}
+
 
         .dashboard-page-card {
             min-width: 0;
@@ -734,6 +735,96 @@
             font-size: 0.92rem;
             line-height: 1.7;
         }
+		/* =====================================================
+			IMAGENS DAS PÁGINAS DO DASHBOARD
+		===================================================== */
+
+		.dashboard-page-visual.dashboard-page-visual-image {
+			position: relative;
+
+			width: 100%;
+		height: auto;
+		aspect-ratio: 16 / 9;
+
+		display: block;
+		overflow: hidden;
+
+		background: #07131f;
+		}
+
+
+		/* Imagem da página */
+
+		.dashboard-page-image {
+			width: 100%;
+			height: 100%;
+
+			display: block;
+
+			object-fit: contain;
+			object-position: center;
+
+			background: #07131f;
+
+			transition:
+				transform 450ms ease,
+				filter 300ms ease;
+		}
+
+
+		/* Zoom suave ao passar o mouse */
+
+		.dashboard-page-card:hover .dashboard-page-image {
+			transform: scale(1.025);
+
+			filter:
+				saturate(1.06)
+				contrast(1.02);
+		}	
+
+
+		/* Gradiente para destacar o nome da página */
+
+		.dashboard-page-visual-image::after {
+			content: "";
+
+			position: absolute;
+			inset: 0;
+			z-index: 1;
+
+			background:
+				linear-gradient(
+					to top,
+					rgba(7, 19, 31, 0.9) 0%,
+					rgba(7, 19, 31, 0.25) 30%,
+					transparent 58%
+				);
+
+			pointer-events: none;
+		}
+
+
+		/* Nome sobre a imagem */
+
+		.dashboard-page-visual-image .dashboard-page-name {
+			position: absolute;
+			right: 18px;
+			bottom: 16px;
+			left: 18px;
+			z-index: 2;
+
+			margin: 0;
+
+			color: var(--color-primary);
+
+			font-size: 0.72rem;
+			font-weight: 900;
+			letter-spacing: 0.08em;
+			line-height: 1.4;
+			text-transform: uppercase;
+
+			pointer-events: none;
+		}
 
 
         /* =====================================================
@@ -1920,199 +2011,175 @@
         </section>
 
 
-        <!-- =================================================
-             PÁGINAS DO DASHBOARD
-        ================================================== -->
+<!-- =================================================
+     PÁGINAS DO DASHBOARD
+================================================== -->
 
-        <section
-            class="case-section case-section-gradient"
-            id="paginas"
-        >
-            <div class="container">
+<section
+    class="case-section case-section-gradient"
+    id="paginas"
+>
+    <div class="container">
 
-                <div class="case-section-header">
-                    <span class="case-label">
-                        04 — Páginas
-                    </span>
+        <div class="case-section-header">
+            <span class="case-label">
+                04 — Páginas
+            </span>
 
-                    <h2 class="case-title">
-                        Estrutura analítica do dashboard
-                    </h2>
+            <h2 class="case-title">
+                Estrutura analítica do dashboard
+            </h2>
 
-                    <p class="case-description">
-                        Cada página responde a um conjunto específico de
-                        perguntas, mantendo a experiência visual consistente
-                        em toda a solução.
+            <p class="case-description">
+                Cada página responde a um conjunto específico de
+                perguntas, mantendo a experiência visual consistente
+                em toda a solução.
+            </p>
+        </div>
+
+        <div class="dashboard-pages-grid">
+
+            <!-- Visão geral -->
+            <article class="dashboard-page-card">
+
+                <figure
+                    class="dashboard-page-visual dashboard-page-visual-image"
+                >
+                    <img
+                        class="dashboard-page-image"
+                        src="../assets/images/dashboards/finance-dashboard/finance-dashboard-visaogeral.png"
+                        alt="Página de visão geral do Dashboard Financeiro"
+                        width="1200"
+                        height="675"
+                        loading="lazy"
+                    >
+
+                    <figcaption class="dashboard-page-name">
+                        Overview
+                    </figcaption>
+                </figure>
+
+                <div class="dashboard-page-content">
+                    <h3>
+                        Visão geral
+                    </h3>
+
+                    <p>
+                        Resumo dos principais indicadores financeiros,
+                        evolução do saldo, receitas, despesas e
+                        distribuição das movimentações.
                     </p>
                 </div>
 
-                <div class="dashboard-pages-grid">
+            </article>
 
-                    <article class="dashboard-page-card">
-                        <div class="dashboard-page-visual">
-                            <span
-                                class="dashboard-page-number"
-                                aria-hidden="true"
-                            >
-                                01
-                            </span>
 
-                            <span class="dashboard-page-name">
-                                Overview
-                            </span>
-                        </div>
+            <!-- Fluxo financeiro -->
+            <article class="dashboard-page-card">
 
-                        <div class="dashboard-page-content">
-                            <h3>
-                                Visão geral
-                            </h3>
+                <figure
+                    class="dashboard-page-visual dashboard-page-visual-image"
+                >
+                    <img
+                        class="dashboard-page-image"
+                        src="../assets/images/dashboards/finance-dashboard/finance-dashboard-fluxofinanceiro.png"
+                        alt="Página de fluxo financeiro do Dashboard Financeiro"
+                        width="1200"
+                        height="675"
+                        loading="lazy"
+                    >
 
-                            <p>
-                                Resumo dos principais indicadores financeiros,
-                                evolução do saldo, receitas, despesas e
-                                distribuição das movimentações.
-                            </p>
-                        </div>
-                    </article>
+                    <figcaption class="dashboard-page-name">
+                        Financial Flow
+                    </figcaption>
+                </figure>
 
-                    <article class="dashboard-page-card">
-                        <div class="dashboard-page-visual">
-                            <span
-                                class="dashboard-page-number"
-                                aria-hidden="true"
-                            >
-                                02
-                            </span>
+                <div class="dashboard-page-content">
+                    <h3>
+                        Fluxo financeiro
+                    </h3>
 
-                            <span class="dashboard-page-name">
-                                Financial Flow
-                            </span>
-                        </div>
-
-                        <div class="dashboard-page-content">
-                            <h3>
-                                Fluxo financeiro
-                            </h3>
-
-                            <p>
-                                Análise das movimentações ao longo do tempo,
-                                destacando entradas, saídas, resultado e
-                                comportamento do saldo.
-                            </p>
-                        </div>
-                    </article>
-
-                    <article class="dashboard-page-card">
-                        <div class="dashboard-page-visual">
-                            <span
-                                class="dashboard-page-number"
-                                aria-hidden="true"
-                            >
-                                03
-                            </span>
-
-                            <span class="dashboard-page-name">
-                                Credit Cards
-                            </span>
-                        </div>
-
-                        <div class="dashboard-page-content">
-                            <h3>
-                                Cartões de crédito
-                            </h3>
-
-                            <p>
-                                Acompanhamento das faturas, limites disponíveis,
-                                utilização dos cartões e distribuição dos
-                                gastos.
-                            </p>
-                        </div>
-                    </article>
-
-                    <article class="dashboard-page-card">
-                        <div class="dashboard-page-visual">
-                            <span
-                                class="dashboard-page-number"
-                                aria-hidden="true"
-                            >
-                                04
-                            </span>
-
-                            <span class="dashboard-page-name">
-                                Loans
-                            </span>
-                        </div>
-
-                        <div class="dashboard-page-content">
-                            <h3>
-                                Empréstimos
-                            </h3>
-
-                            <p>
-                                Visão dos contratos, parcelas, pagamentos,
-                                prazos e valores ainda pendentes.
-                            </p>
-                        </div>
-                    </article>
-
-                    <article class="dashboard-page-card">
-                        <div class="dashboard-page-visual">
-                            <span
-                                class="dashboard-page-number"
-                                aria-hidden="true"
-                            >
-                                05
-                            </span>
-
-                            <span class="dashboard-page-name">
-                                Details
-                            </span>
-                        </div>
-
-                        <div class="dashboard-page-content">
-                            <h3>
-                                Detalhamento
-                            </h3>
-
-                            <p>
-                                Área dedicada à exploração detalhada das
-                                transações e à validação das informações
-                                apresentadas nos indicadores.
-                            </p>
-                        </div>
-                    </article>
-
-                    <article class="dashboard-page-card">
-                        <div class="dashboard-page-visual">
-                            <span
-                                class="dashboard-page-number"
-                                aria-hidden="true"
-                            >
-                                06
-                            </span>
-
-                            <span class="dashboard-page-name">
-                                Navigation
-                            </span>
-                        </div>
-
-                        <div class="dashboard-page-content">
-                            <h3>
-                                Navegação
-                            </h3>
-
-                            <p>
-                                Menus, filtros e controles desenhados para
-                                oferecer uma experiência clara entre as
-                                diferentes áreas do relatório.
-                            </p>
-                        </div>
-                    </article>
-
+                    <p>
+                        Análise das movimentações ao longo do tempo,
+                        destacando entradas, saídas, resultado e
+                        comportamento do saldo financeiro.
+                    </p>
                 </div>
-            </div>
-        </section>
 
+            </article>
+
+
+            <!-- Cartões de crédito -->
+            <article class="dashboard-page-card">
+
+                <figure
+                    class="dashboard-page-visual dashboard-page-visual-image"
+                >
+                    <img
+                        class="dashboard-page-image"
+                        src="../assets/images/dashboards/finance-dashboard/finance-dashboard-cartoesdecredito.png"
+                        alt="Página de cartões de crédito do Dashboard Financeiro"
+                        width="1200"
+                        height="675"
+                        loading="lazy"
+                    >
+
+                    <figcaption class="dashboard-page-name">
+                        Credit Cards
+                    </figcaption>
+                </figure>
+
+                <div class="dashboard-page-content">
+                    <h3>
+                        Cartões de crédito
+                    </h3>
+
+                    <p>
+                        Acompanhamento das faturas, limites disponíveis,
+                        utilização dos cartões e distribuição dos gastos
+                        por categoria.
+                    </p>
+                </div>
+
+            </article>
+
+
+            <!-- Empréstimos -->
+            <article class="dashboard-page-card">
+
+                <figure
+                    class="dashboard-page-visual dashboard-page-visual-image"
+                >
+                    <img
+                        class="dashboard-page-image"
+                        src="../assets/images/dashboards/finance-dashboard/finance-dashboard-emprestimos.png"
+                        alt="Página de empréstimos do Dashboard Financeiro"
+                        width="1200"
+                        height="675"
+                        loading="lazy"
+                    >
+
+                    <figcaption class="dashboard-page-name">
+                        Loans
+                    </figcaption>
+                </figure>
+
+                <div class="dashboard-page-content">
+                    <h3>
+                        Empréstimos
+                    </h3>
+
+                    <p>
+                        Visão dos contratos, parcelas, pagamentos,
+                        prazos e valores ainda pendentes.
+                    </p>
+                </div>
+
+            </article>
+
+        </div>
+    </div>
+</section>
 
         <!-- =================================================
              ARQUITETURA
