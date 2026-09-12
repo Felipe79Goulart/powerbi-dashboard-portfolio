@@ -1071,6 +1071,114 @@
             line-height: 1.7;
         }
 
+		/* =====================================================
+		DASHBOARD INTERATIVO — POWER BI
+		===================================================== */
+
+		.powerbi-embed-shell {
+			overflow: hidden;
+
+			border: 1px solid var(--color-border);
+			border-radius: 22px;
+
+			background: #07131f;
+
+			box-shadow: 0 28px 70px rgba(0, 0, 0, 0.34);
+		}
+
+		.powerbi-embed {
+			position: relative;
+
+			width: 100%;
+			aspect-ratio: 16 / 9;
+
+			overflow: hidden;
+
+			background: #07131f;
+		}
+
+		.powerbi-embed iframe,
+		.powerbi-frame {
+			position: absolute;
+			inset: 0;
+
+			width: 100% !important;
+			height: 100% !important;
+
+			display: block;
+
+			border: 0;
+
+			background: #07131f;
+		}
+
+		.powerbi-embed-footer {
+			min-height: 68px;
+			padding: 16px 20px;
+
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 24px;
+
+			border-top: 1px solid var(--color-border);
+
+			background: rgba(255, 255, 255, 0.035);
+		}
+
+		.powerbi-embed-footer p {
+			color: var(--color-text-soft);
+
+			font-size: 0.82rem;
+			line-height: 1.6;
+		}
+
+		.powerbi-embed-status {
+			flex-shrink: 0;
+
+			padding: 8px 12px;
+
+			border: 1px solid rgba(69, 214, 168, 0.3);
+			border-radius: 999px;
+
+			color: var(--color-accent);
+			background: rgba(69, 214, 168, 0.06);
+
+			font-size: 0.68rem;
+			font-weight: 900;
+			letter-spacing: 0.06em;
+			line-height: 1;
+			text-transform: uppercase;
+		}
+
+		.powerbi-embed-status::before {
+			content: "";
+
+			width: 7px;
+			height: 7px;
+			margin-right: 7px;
+
+			display: inline-block;
+
+			border-radius: 50%;
+
+			background: var(--color-accent);
+			box-shadow: 0 0 10px rgba(69, 214, 168, 0.65);
+		}
+
+		.powerbi-noscript {
+			margin-top: 18px;
+			padding: 16px;
+
+			border: 1px solid rgba(255, 201, 40, 0.25);
+			border-radius: 12px;
+
+			color: var(--color-text-soft);
+			background: rgba(255, 201, 40, 0.05);
+
+			font-size: 0.9rem;
+			line-height: 1.6;
+		}
 
         /* =====================================================
            PRÓXIMAS EVOLUÇÕES
@@ -1257,6 +1365,28 @@
                 flex-direction: column;
             }
         }
+		@media (max-width: 700px) {
+			.powerbi-embed {
+				aspect-ratio: auto;
+				min-height: 520px;
+			}
+
+			.powerbi-embed-footer {
+				align-items: flex-start;
+				flex-direction: column;
+				gap: 12px;
+			}
+		}
+
+		@media (max-width: 480px) {
+			.powerbi-embed {
+				min-height: 480px;
+			}
+
+			.powerbi-embed-footer {
+				padding: 15px;
+			}
+		}
 
         @media (max-width: 760px) {
             .project-header {
@@ -1613,6 +1743,12 @@
                             Aprendizados
                         </a>
                     </li>
+					<li>
+						<a href="#dashboard-interativo">
+							Dashboard interativo
+						</a>
+					</li>
+
                 </ul>
             </div>
         </nav>
@@ -2644,6 +2780,66 @@
                 </div>
             </div>
         </section>
+		<!-- =================================================
+			DASHBOARD INTERATIVO
+		================================================== -->
+
+		<section
+			class="case-section"
+			id="dashboard-interativo"
+		>
+			<div class="container">
+
+				<div class="case-section-header">
+					<span class="case-label">
+						05 — Dashboard interativo
+					</span>
+
+					<h2 class="case-title">
+						Explore o relatório no Power BI
+					</h2>
+
+					<p class="case-description">
+						Navegue pelas páginas do dashboard, utilize os filtros
+						e explore os indicadores financeiros diretamente nesta
+						página.
+					</p>
+				</div>
+
+				<div class="powerbi-embed-shell">
+
+					<div class="powerbi-embed">
+						<iframe
+							class="powerbi-frame"
+							title="Dashboard Financeiro interativo desenvolvido por Felipe Goulart"
+							src="https://app.powerbi.com/view?r=eyJrIjoiYmUzMWU5MDAtMzk2Mi00ZWI5LTkzMTktMTc4Mjg4NmUwOGViIiwidCI6IjM0OTE4NDA0LTg0YjYtNDFlZC1iNjNkLTVhYzk3YjE0NjkwNCJ9&pageName=7bd7b16991563dd877bd"
+							loading="lazy"
+							allowfullscreen
+						></iframe>
+					</div>
+
+					<div class="powerbi-embed-footer">
+						<p>
+							Utilize a navegação inferior do relatório para
+							acessar as diferentes páginas da análise.
+						</p>
+
+						<span class="powerbi-embed-status">
+							Relatório interativo
+						</span>
+					</div>
+
+				</div>
+
+				<noscript>
+					<p class="powerbi-noscript">
+						O JavaScript precisa estar habilitado para visualizar
+						o relatório interativo do Power BI.
+					</p>
+				</noscript>
+
+				</div>
+		</section>
 
 
         <!-- =================================================
