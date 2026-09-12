@@ -1507,21 +1507,44 @@ button:focus-visible {
     }
 }
 /* =====================================================
-   FOTO DE PERFIL — SOBRE MIM
+   SOBRE MIM — FOTO, IDENTIFICAÇÃO E DESCRIÇÃO
 ===================================================== */
 
-.about-photo-wrapper {
-    position: relative;
-    left: -40px;
+/* Conteúdo geral da seção */
 
-    width: 240px;
-    height: 240px;
+.about-content {
+    width: 100%;
+}
+
+
+/* Foto, nome e formação */
+
+.about-profile {
+    width: fit-content;
     margin: 0 auto 32px;
 
-    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+/* Círculo da foto */
+
+.about-photo-wrapper {
+    width: 240px;
+    height: 240px;
+    margin: 0;
+
+    overflow: hidden;
 
     border-radius: 50%;
+
+    flex-shrink: 0;
 }
+
+
+/* Foto */
 
 .about-photo {
     width: 100%;
@@ -1542,21 +1565,104 @@ button:focus-visible {
         0 0 0 8px rgba(255, 201, 40, 0.06);
 }
 
-/* Tablet */
-@media (max-width: 900px) {
-    .about-photo-wrapper {
-        left: -20px;
-    }
+
+/* Nome e formação abaixo da foto */
+
+.about-profile-description {
+    width: 100%;
+    margin-top: 22px;
+
+    text-align: center;
 }
 
-/* Celular */
-@media (max-width: 700px) {
-    .about-photo-wrapper {
-        left: 0;
+.about-profile-name {
+    margin: 0 0 5px;
 
+    color: var(--color-text);
+
+    font-size: 1.15rem;
+    font-weight: 800;
+    line-height: 1.4;
+}
+
+.about-profile-title {
+    margin: 0;
+
+    color: var(--color-text-soft);
+
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+
+/* Descrição completa */
+
+.about-text {
+    width: 100%;
+
+    text-align: left;
+}
+
+.about-text p {
+    margin: 0 0 16px;
+
+    color: var(--color-text-soft);
+
+    line-height: 1.8;
+}
+
+.about-text .about-highlight {
+    color: var(--color-text);
+
+    font-weight: 700;
+}
+
+
+/* Competências */
+
+.about-skills {
+    margin-top: 24px;
+
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.about-skills span {
+    padding: 7px 11px;
+
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+
+    color: var(--color-text-soft);
+    background: rgba(255, 255, 255, 0.03);
+
+    font-size: 0.72rem;
+    font-weight: 700;
+}
+
+
+/* Espaço de uma linha antes do botão */
+
+.about-contact {
+    margin-top: 24px;
+}
+
+
+/* Responsividade */
+
+@media (max-width: 700px) {
+    .about-profile {
+        margin-bottom: 28px;
+    }
+
+    .about-photo-wrapper {
         width: 210px;
         height: 210px;
-        margin-inline: auto;
+    }
+
+    .about-profile-description {
+        margin-top: 18px;
     }
 }
 
@@ -1564,5 +1670,13 @@ button:focus-visible {
     .about-photo-wrapper {
         width: 180px;
         height: 180px;
+    }
+
+    .about-profile-name {
+        font-size: 1.05rem;
+    }
+
+    .about-profile-title {
+        font-size: 0.88rem;
     }
 }
