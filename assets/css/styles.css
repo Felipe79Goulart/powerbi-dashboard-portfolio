@@ -269,6 +269,32 @@ button:focus-visible {
     transform: scaleX(1);
     transform-origin: left;
 }
+/* =====================================================
+   SELETOR DE IDIOMA
+===================================================== */
+
+.language-link {
+    padding: 7px 10px;
+
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+
+    color: var(--color-primary) !important;
+    background: rgba(255, 201, 40, 0.04);
+
+    font-size: 0.72rem !important;
+    font-weight: 900 !important;
+    letter-spacing: 0.05em;
+    line-height: 1;
+}
+
+.language-link:hover,
+.language-link:focus-visible {
+    border-color: rgba(255, 201, 40, 0.5);
+
+    color: var(--color-background) !important;
+    background: var(--color-primary);
+}
 
 
 /* =========================================================
