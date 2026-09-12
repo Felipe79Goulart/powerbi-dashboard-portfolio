@@ -1,0 +1,2751 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Estudo de caso do Dashboard Financeiro desenvolvido por Felipe Goulart com Power BI, DAX, Power Query e SQL."
+    >
+
+    <meta
+        name="author"
+        content="Felipe Goulart"
+    >
+
+    <meta
+        name="theme-color"
+        content="#07131f"
+    >
+
+    <title>
+        Dashboard Financeiro | Felipe Goulart
+    </title>
+
+    <!-- CSS global do portfólio -->
+    <link
+        rel="stylesheet"
+        href="../assets/css/styles.css?v=1.2"
+    >
+
+    <!-- Estilos específicos da página do projeto -->
+    <style>
+        /* =====================================================
+           PÁGINA DO PROJETO
+        ===================================================== */
+
+        .project-page {
+            background: var(--color-background);
+        }
+
+
+        /* =====================================================
+           CABEÇALHO INTERNO
+        ===================================================== */
+
+        .project-header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+
+            border-bottom: 1px solid var(--color-border);
+
+            background: rgba(7, 19, 31, 0.94);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+        }
+
+        .project-navigation {
+            min-height: 74px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 30px;
+        }
+
+        .project-brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+
+            color: var(--color-text);
+
+            font-weight: 800;
+        }
+
+        .project-brand-symbol {
+            width: 38px;
+            height: 38px;
+
+            display: grid;
+            flex-shrink: 0;
+            place-items: center;
+
+            border-radius: 10px;
+
+            color: var(--color-background);
+            background: var(--color-primary);
+
+            font-size: 0.85rem;
+            font-weight: 900;
+
+            transition:
+                transform var(--transition),
+                background-color var(--transition);
+        }
+
+        .project-brand:hover .project-brand-symbol {
+            transform: rotate(-4deg) scale(1.05);
+            background: var(--color-primary-light);
+        }
+
+        .project-navigation-links {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .project-navigation-links a {
+            color: var(--color-text-soft);
+
+            font-size: 0.92rem;
+            font-weight: 700;
+
+            transition: color var(--transition);
+        }
+
+        .project-navigation-links a:hover {
+            color: var(--color-primary);
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-link-arrow {
+            transition: transform var(--transition);
+        }
+
+        .back-link:hover .back-link-arrow {
+            transform: translateX(-4px);
+        }
+
+
+        /* =====================================================
+           HERO DO PROJETO
+        ===================================================== */
+
+        .project-hero {
+            position: relative;
+            overflow: hidden;
+
+            padding: 100px 0 80px;
+
+            background:
+                radial-gradient(
+                    circle at 88% 12%,
+                    rgba(69, 214, 168, 0.12),
+                    transparent 32%
+                ),
+                radial-gradient(
+                    circle at 10% 90%,
+                    rgba(255, 201, 40, 0.08),
+                    transparent 30%
+                ),
+                linear-gradient(
+                    145deg,
+                    #07131f,
+                    #0b2638 58%,
+                    #103d52
+                );
+        }
+
+        .project-hero::after {
+            content: "";
+
+            position: absolute;
+            right: -180px;
+            bottom: -260px;
+
+            width: 540px;
+            height: 540px;
+
+            border: 1px solid rgba(255, 201, 40, 0.16);
+            border-radius: 50%;
+
+            pointer-events: none;
+        }
+
+        .project-breadcrumb {
+            position: relative;
+            z-index: 2;
+
+            margin-bottom: 40px;
+
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+
+            color: var(--color-text-soft);
+
+            font-size: 0.84rem;
+            font-weight: 700;
+        }
+
+        .project-breadcrumb a {
+            transition: color var(--transition);
+        }
+
+        .project-breadcrumb a:hover {
+            color: var(--color-primary);
+        }
+
+        .project-breadcrumb-separator {
+            color: rgba(255, 255, 255, 0.35);
+        }
+
+        .project-hero-grid {
+            position: relative;
+            z-index: 2;
+
+            display: grid;
+            grid-template-columns: 1.02fr 0.98fr;
+            align-items: center;
+            gap: 70px;
+        }
+
+        .project-status-label {
+            width: fit-content;
+            margin-bottom: 24px;
+            padding: 8px 13px;
+
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+
+            border: 1px solid rgba(69, 214, 168, 0.32);
+            border-radius: 999px;
+
+            color: var(--color-accent);
+            background: rgba(69, 214, 168, 0.07);
+
+            font-size: 0.72rem;
+            font-weight: 900;
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+        }
+
+        .project-status-label::before {
+            content: "";
+
+            width: 8px;
+            height: 8px;
+
+            border-radius: 50%;
+
+            background: var(--color-accent);
+            box-shadow: 0 0 12px rgba(69, 214, 168, 0.8);
+        }
+
+        .project-hero-title {
+            max-width: 760px;
+            margin-bottom: 24px;
+
+            color: var(--color-text);
+
+            font-size: clamp(3rem, 7vw, 5.6rem);
+            font-weight: 750;
+            line-height: 0.98;
+            letter-spacing: -0.06em;
+        }
+
+        .project-hero-title span {
+            display: block;
+            color: var(--color-primary);
+        }
+
+        .project-hero-description {
+            max-width: 680px;
+            margin-bottom: 32px;
+
+            color: var(--color-text-soft);
+
+            font-size: clamp(1rem, 2vw, 1.16rem);
+            line-height: 1.75;
+        }
+
+        .project-technology-list {
+            margin-bottom: 36px;
+
+            display: flex;
+            flex-wrap: wrap;
+            gap: 9px;
+        }
+
+        .project-technology {
+            padding: 8px 12px;
+
+            border: 1px solid var(--color-border);
+            border-radius: 999px;
+
+            color: var(--color-text-soft);
+            background: rgba(255, 255, 255, 0.04);
+
+            font-size: 0.76rem;
+            font-weight: 800;
+        }
+
+
+        /* =====================================================
+           IMAGEM PRINCIPAL
+        ===================================================== */
+
+        .project-cover-wrapper {
+            position: relative;
+
+            padding: 12px;
+
+            border: 1px solid var(--color-border);
+            border-radius: 24px;
+
+            background: rgba(255, 255, 255, 0.045);
+
+            box-shadow: 0 30px 75px rgba(0, 0, 0, 0.4);
+
+            transform: rotate(1.2deg);
+        }
+
+        .project-cover-wrapper::before {
+            content: "";
+
+            position: absolute;
+            top: -16px;
+            right: 34px;
+            z-index: 2;
+
+            width: 82px;
+            height: 32px;
+
+            background: rgba(255, 201, 40, 0.82);
+
+            transform: rotate(4deg);
+        }
+
+        .project-cover {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+
+            display: block;
+            object-fit: cover;
+            object-position: center;
+
+            border-radius: 15px;
+
+            background: var(--color-surface);
+        }
+
+        .project-cover-caption {
+            padding: 14px 8px 4px;
+
+            color: var(--color-text-soft);
+
+            font-size: 0.76rem;
+            line-height: 1.5;
+            text-align: center;
+        }
+
+
+        /* =====================================================
+           NAVEGAÇÃO INTERNA
+        ===================================================== */
+
+        .project-index {
+            position: relative;
+            z-index: 10;
+
+            border-top: 1px solid var(--color-border);
+            border-bottom: 1px solid var(--color-border);
+
+            background: var(--color-background-soft);
+        }
+
+        .project-index-list {
+            min-height: 68px;
+
+            display: flex;
+            align-items: center;
+            gap: 26px;
+            overflow-x: auto;
+
+            list-style: none;
+
+            scrollbar-width: thin;
+        }
+
+        .project-index-list a {
+            color: var(--color-text-soft);
+
+            font-size: 0.84rem;
+            font-weight: 800;
+            white-space: nowrap;
+
+            transition: color var(--transition);
+        }
+
+        .project-index-list a:hover {
+            color: var(--color-primary);
+        }
+
+
+        /* =====================================================
+           ESTRUTURA DAS SEÇÕES
+        ===================================================== */
+
+        .case-section {
+            padding: 96px 0;
+        }
+
+        .case-section-soft {
+            background: var(--color-background-soft);
+        }
+
+        .case-section-gradient {
+            background:
+                linear-gradient(
+                    145deg,
+                    #0d3043,
+                    #0a1f2e 58%,
+                    #07131f
+                );
+        }
+
+        .case-section-header {
+            max-width: 780px;
+            margin-bottom: 50px;
+        }
+
+        .case-label {
+            display: inline-block;
+            margin-bottom: 14px;
+
+            color: var(--color-primary);
+
+            font-size: 0.76rem;
+            font-weight: 900;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        .case-title {
+            margin-bottom: 20px;
+
+            color: var(--color-text);
+
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 750;
+            line-height: 1.08;
+            letter-spacing: -0.045em;
+        }
+
+        .case-description {
+            color: var(--color-text-soft);
+
+            font-size: 1.06rem;
+            line-height: 1.8;
+        }
+
+        .case-description + .case-description {
+            margin-top: 18px;
+        }
+
+
+        /* =====================================================
+           VISÃO GERAL
+        ===================================================== */
+
+        .overview-grid {
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: 70px;
+        }
+
+        .overview-content p {
+            margin-bottom: 20px;
+
+            color: var(--color-text-soft);
+
+            font-size: 1.02rem;
+            line-height: 1.8;
+        }
+
+        .overview-content strong {
+            color: var(--color-text);
+        }
+
+        .project-facts {
+            display: grid;
+            gap: 14px;
+        }
+
+        .project-fact {
+            padding: 20px;
+
+            border: 1px solid var(--color-border);
+            border-radius: 14px;
+
+            background: rgba(255, 255, 255, 0.035);
+        }
+
+        .project-fact-label {
+            display: block;
+            margin-bottom: 6px;
+
+            color: var(--color-primary);
+
+            font-size: 0.7rem;
+            font-weight: 900;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .project-fact-value {
+            color: var(--color-text);
+
+            font-size: 0.96rem;
+            font-weight: 700;
+            line-height: 1.5;
+        }
+
+
+        /* =====================================================
+           PROBLEMA E OBJETIVOS
+        ===================================================== */
+
+        .challenge-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 24px;
+        }
+
+        .challenge-card {
+            padding: 34px;
+
+            border: 1px solid var(--color-border);
+            border-radius: var(--border-radius);
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(255, 255, 255, 0.055),
+                    rgba(255, 255, 255, 0.02)
+                );
+        }
+
+        .challenge-card-number {
+            display: block;
+            margin-bottom: 28px;
+
+            color: var(--color-primary);
+
+            font-size: 0.76rem;
+            font-weight: 900;
+        }
+
+        .challenge-card h3 {
+            margin-bottom: 14px;
+
+            color: var(--color-text);
+
+            font-size: 1.4rem;
+            line-height: 1.3;
+        }
+
+        .challenge-card p {
+            color: var(--color-text-soft);
+
+            line-height: 1.75;
+        }
+
+
+        /* =====================================================
+           INDICADORES
+        ===================================================== */
+
+        .indicator-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .indicator-card {
+            min-width: 0;
+            padding: 26px;
+
+            border: 1px solid var(--color-border);
+            border-radius: 16px;
+
+            background: rgba(255, 255, 255, 0.04);
+
+            transition:
+                transform var(--transition),
+                border-color var(--transition),
+                background-color var(--transition);
+        }
+
+        .indicator-card:hover {
+            transform: translateY(-5px);
+
+            border-color: rgba(255, 201, 40, 0.4);
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .indicator-icon {
+            width: 42px;
+            height: 42px;
+            margin-bottom: 22px;
+
+            display: grid;
+            place-items: center;
+
+            border-radius: 11px;
+
+            color: var(--color-background);
+            background: var(--color-primary);
+
+            font-size: 0.82rem;
+            font-weight: 900;
+        }
+
+        .indicator-card h3 {
+            margin-bottom: 9px;
+
+            color: var(--color-text);
+
+            font-size: 1rem;
+            line-height: 1.35;
+        }
+
+        .indicator-card p {
+            color: var(--color-text-soft);
+
+            font-size: 0.88rem;
+            line-height: 1.65;
+        }
+
+
+        /* =====================================================
+           PÁGINAS DO DASHBOARD
+        ===================================================== */
+
+        .dashboard-pages-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 22px;
+        }
+
+        .dashboard-page-card {
+            min-width: 0;
+            overflow: hidden;
+
+            border: 1px solid var(--color-border);
+            border-radius: var(--border-radius);
+
+            background: var(--color-surface);
+
+            transition:
+                transform var(--transition),
+                border-color var(--transition),
+                box-shadow var(--transition);
+        }
+
+        .dashboard-page-card:hover {
+            transform: translateY(-7px);
+
+            border-color: rgba(255, 201, 40, 0.45);
+
+            box-shadow: 0 22px 48px rgba(0, 0, 0, 0.24);
+        }
+
+        .dashboard-page-visual {
+            position: relative;
+
+            height: 190px;
+            overflow: hidden;
+
+            display: grid;
+            place-items: center;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(255, 201, 40, 0.14),
+                    rgba(69, 214, 168, 0.08)
+                );
+        }
+
+        .dashboard-page-number {
+            color: rgba(255, 255, 255, 0.13);
+
+            font-size: 5.5rem;
+            font-weight: 900;
+            line-height: 1;
+
+            user-select: none;
+        }
+
+        .dashboard-page-name {
+            position: absolute;
+            right: 18px;
+            bottom: 16px;
+            left: 18px;
+
+            color: var(--color-primary);
+
+            font-size: 0.72rem;
+            font-weight: 900;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .dashboard-page-content {
+            padding: 24px;
+        }
+
+        .dashboard-page-content h3 {
+            margin-bottom: 11px;
+
+            color: var(--color-text);
+
+            font-size: 1.25rem;
+        }
+
+        .dashboard-page-content p {
+            color: var(--color-text-soft);
+
+            font-size: 0.92rem;
+            line-height: 1.7;
+        }
+
+
+        /* =====================================================
+           ARQUITETURA
+        ===================================================== */
+
+        .architecture-flow {
+            display: grid;
+            grid-template-columns:
+                minmax(0, 1fr)
+                auto
+                minmax(0, 1fr)
+                auto
+                minmax(0, 1fr)
+                auto
+                minmax(0, 1fr);
+            align-items: center;
+            gap: 14px;
+        }
+
+        .architecture-step {
+            min-height: 170px;
+            padding: 24px;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+
+            border: 1px solid var(--color-border);
+            border-radius: 15px;
+
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .architecture-step span {
+            display: block;
+            margin-bottom: 10px;
+
+            color: var(--color-primary);
+
+            font-size: 0.7rem;
+            font-weight: 900;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .architecture-step h3 {
+            margin-bottom: 8px;
+
+            color: var(--color-text);
+
+            font-size: 1rem;
+        }
+
+        .architecture-step p {
+            color: var(--color-text-soft);
+
+            font-size: 0.84rem;
+            line-height: 1.6;
+        }
+
+        .architecture-arrow {
+            color: var(--color-primary);
+
+            font-size: 1.5rem;
+            font-weight: 900;
+        }
+
+
+        /* =====================================================
+           TECNOLOGIAS
+        ===================================================== */
+
+        .technology-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .technology-card {
+            min-width: 0;
+            padding: 26px;
+
+            border: 1px solid var(--color-border);
+            border-radius: 15px;
+
+            background: rgba(255, 255, 255, 0.035);
+        }
+
+        .technology-card-index {
+            display: block;
+            margin-bottom: 24px;
+
+            color: var(--color-primary);
+
+            font-size: 0.72rem;
+            font-weight: 900;
+        }
+
+        .technology-card h3 {
+            margin-bottom: 9px;
+
+            color: var(--color-text);
+
+            font-size: 1.08rem;
+        }
+
+        .technology-card p {
+            color: var(--color-text-soft);
+
+            font-size: 0.88rem;
+            line-height: 1.65;
+        }
+
+
+        /* =====================================================
+           LOCALIZAÇÃO
+        ===================================================== */
+
+        .localization-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 24px;
+        }
+
+        .localization-card {
+            padding: 34px;
+
+            border: 1px solid var(--color-border);
+            border-radius: var(--border-radius);
+
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .localization-language {
+            margin-bottom: 24px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .localization-language h3 {
+            color: var(--color-text);
+
+            font-size: 1.35rem;
+        }
+
+        .language-code {
+            padding: 7px 10px;
+
+            border: 1px solid var(--color-border);
+            border-radius: 999px;
+
+            color: var(--color-primary);
+
+            font-size: 0.7rem;
+            font-weight: 900;
+        }
+
+        .localization-card ul {
+            display: grid;
+            gap: 12px;
+
+            list-style: none;
+        }
+
+        .localization-card li {
+            position: relative;
+
+            padding-left: 23px;
+
+            color: var(--color-text-soft);
+
+            font-size: 0.94rem;
+            line-height: 1.6;
+        }
+
+        .localization-card li::before {
+            content: "✓";
+
+            position: absolute;
+            top: 0;
+            left: 0;
+
+            color: var(--color-accent);
+
+            font-weight: 900;
+        }
+
+
+        /* =====================================================
+           APRENDIZADOS
+        ===================================================== */
+
+        .learning-list {
+            display: grid;
+            gap: 14px;
+        }
+
+        .learning-item {
+            padding: 24px;
+
+            display: grid;
+            grid-template-columns: auto 1fr;
+            align-items: start;
+            gap: 20px;
+
+            border: 1px solid var(--color-border);
+            border-radius: 14px;
+
+            background: rgba(255, 255, 255, 0.035);
+        }
+
+        .learning-number {
+            width: 38px;
+            height: 38px;
+
+            display: grid;
+            place-items: center;
+
+            border-radius: 10px;
+
+            color: var(--color-background);
+            background: var(--color-primary);
+
+            font-size: 0.78rem;
+            font-weight: 900;
+        }
+
+        .learning-item h3 {
+            margin-bottom: 7px;
+
+            color: var(--color-text);
+
+            font-size: 1.05rem;
+        }
+
+        .learning-item p {
+            color: var(--color-text-soft);
+
+            font-size: 0.92rem;
+            line-height: 1.7;
+        }
+
+
+        /* =====================================================
+           PRÓXIMAS EVOLUÇÕES
+        ===================================================== */
+
+        .next-steps-list {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .next-step {
+            padding: 22px;
+
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+
+            border: 1px solid var(--color-border);
+            border-radius: 13px;
+
+            background: rgba(255, 255, 255, 0.035);
+        }
+
+        .next-step-marker {
+            width: 10px;
+            height: 10px;
+            margin-top: 7px;
+
+            flex-shrink: 0;
+
+            border-radius: 50%;
+
+            background: var(--color-primary);
+            box-shadow: 0 0 13px rgba(255, 201, 40, 0.55);
+        }
+
+        .next-step h3 {
+            margin-bottom: 5px;
+
+            color: var(--color-text);
+
+            font-size: 0.98rem;
+        }
+
+        .next-step p {
+            color: var(--color-text-soft);
+
+            font-size: 0.88rem;
+            line-height: 1.6;
+        }
+
+
+        /* =====================================================
+           CHAMADA FINAL
+        ===================================================== */
+
+        .project-call-to-action {
+            padding: 96px 0;
+        }
+
+        .project-call-to-action-box {
+            padding: 70px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 60px;
+
+            border: 1px solid rgba(255, 201, 40, 0.28);
+            border-radius: 24px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(255, 201, 40, 0.11),
+                    rgba(69, 214, 168, 0.055)
+                );
+        }
+
+        .project-call-to-action-content {
+            max-width: 700px;
+        }
+
+        .project-call-to-action h2 {
+            margin-bottom: 14px;
+
+            color: var(--color-text);
+
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            line-height: 1.08;
+            letter-spacing: -0.045em;
+        }
+
+        .project-call-to-action p {
+            color: var(--color-text-soft);
+
+            line-height: 1.75;
+        }
+
+        .project-call-to-action-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+
+        /* =====================================================
+           RODAPÉ DA PÁGINA
+        ===================================================== */
+
+        .project-footer {
+            padding: 30px 0;
+
+            border-top: 1px solid var(--color-border);
+
+            background: var(--color-background);
+        }
+
+        .project-footer-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+
+            color: var(--color-text-soft);
+
+            font-size: 0.86rem;
+        }
+
+        .project-footer a {
+            color: var(--color-primary);
+            font-weight: 800;
+        }
+
+        .project-footer a:hover {
+            text-decoration: underline;
+            text-underline-offset: 4px;
+        }
+
+
+        /* =====================================================
+           RESPONSIVIDADE
+        ===================================================== */
+
+        @media (max-width: 1080px) {
+            .project-hero-grid {
+                gap: 45px;
+            }
+
+            .indicator-grid,
+            .technology-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .architecture-flow {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .architecture-arrow {
+                display: none;
+            }
+        }
+
+        @media (max-width: 920px) {
+            .project-hero-grid,
+            .overview-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .project-cover-wrapper {
+                max-width: 760px;
+                transform: none;
+            }
+
+            .dashboard-pages-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .project-call-to-action-box {
+                padding: 48px;
+
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 760px) {
+            .project-header {
+                position: relative;
+            }
+
+            .project-navigation {
+                padding: 15px 0;
+
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 14px;
+            }
+
+            .project-navigation-links {
+                width: 100%;
+                overflow-x: auto;
+                padding-bottom: 6px;
+            }
+
+            .project-navigation-links a {
+                white-space: nowrap;
+            }
+
+            .project-hero {
+                padding: 70px 0 60px;
+            }
+
+            .case-section {
+                padding: 74px 0;
+            }
+
+            .challenge-grid,
+            .localization-grid,
+            .next-steps-list {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .project-breadcrumb {
+                margin-bottom: 30px;
+            }
+
+            .project-hero-title {
+                font-size: clamp(2.8rem, 15vw, 4.5rem);
+            }
+
+            .project-cover-wrapper {
+                padding: 8px;
+                border-radius: 18px;
+            }
+
+            .project-cover {
+                border-radius: 11px;
+            }
+
+            .indicator-grid,
+            .dashboard-pages-grid,
+            .technology-grid,
+            .architecture-flow {
+                grid-template-columns: 1fr;
+            }
+
+            .challenge-card,
+            .localization-card {
+                padding: 26px;
+            }
+
+            .dashboard-page-visual {
+                height: 210px;
+            }
+
+            .project-call-to-action {
+                padding: 72px 0;
+            }
+
+            .project-call-to-action-box {
+                padding: 34px 26px;
+            }
+
+            .project-call-to-action-actions {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .project-call-to-action-actions .button {
+                width: 100%;
+            }
+
+            .project-footer-content {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .indicator-card:hover,
+            .dashboard-page-card:hover {
+                transform: none;
+            }
+        }
+    </style>
+</head>
+
+<body class="project-page">
+
+    <!-- Link de acessibilidade -->
+    <a
+        class="skip-link"
+        href="#conteudo-principal"
+    >
+        Ir para o conteúdo principal
+    </a>
+
+
+    <!-- =====================================================
+         CABEÇALHO
+    ====================================================== -->
+
+    <header class="project-header">
+        <div class="container project-navigation">
+
+            <a
+                class="project-brand"
+                href="../index.html"
+                aria-label="Voltar para a página inicial de Felipe Goulart"
+            >
+                <span
+                    class="project-brand-symbol"
+                    aria-hidden="true"
+                >
+                    FG
+                </span>
+
+                <span>Felipe Goulart</span>
+            </a>
+
+            <nav
+                class="project-navigation-links"
+                aria-label="Navegação do projeto"
+            >
+                <a
+                    class="back-link"
+                    href="../index.html#projetos"
+                >
+                    <span
+                        class="back-link-arrow"
+                        aria-hidden="true"
+                    >
+                        ←
+                    </span>
+
+                    Voltar aos projetos
+                </a>
+
+                <a href="#visao-geral">
+                    Visão geral
+                </a>
+
+                <a href="#paginas">
+                    Páginas
+                </a>
+
+                <a href="#tecnologias">
+                    Tecnologias
+                </a>
+            </nav>
+
+        </div>
+    </header>
+
+
+    <main id="conteudo-principal">
+
+        <!-- =================================================
+             HERO
+        ================================================== -->
+
+        <section class="project-hero">
+            <div class="container">
+
+                <nav
+                    class="project-breadcrumb"
+                    aria-label="Caminho de navegação"
+                >
+                    <a href="../index.html">
+                        Início
+                    </a>
+
+                    <span
+                        class="project-breadcrumb-separator"
+                        aria-hidden="true"
+                    >
+                        /
+                    </span>
+
+                    <a href="../index.html#projetos">
+                        Projetos
+                    </a>
+
+                    <span
+                        class="project-breadcrumb-separator"
+                        aria-hidden="true"
+                    >
+                        /
+                    </span>
+
+                    <span aria-current="page">
+                        Dashboard Financeiro
+                    </span>
+                </nav>
+
+                <div class="project-hero-grid">
+
+                    <div class="project-hero-content">
+
+                        <span class="project-status-label">
+                            Projeto concluído
+                        </span>
+
+                        <h1 class="project-hero-title">
+                            Dashboard
+                            <span>Financeiro</span>
+                        </h1>
+
+                        <p class="project-hero-description">
+                            Solução de Business Intelligence desenvolvida para
+                            transformar dados financeiros em informações claras,
+                            acessíveis e orientadas à tomada de decisão.
+                        </p>
+
+                        <div
+                            class="project-technology-list"
+                            aria-label="Tecnologias utilizadas"
+                        >
+                            <span class="project-technology">
+                                Power BI
+                            </span>
+
+                            <span class="project-technology">
+                                DAX
+                            </span>
+
+                            <span class="project-technology">
+                                Power Query
+                            </span>
+
+                            <span class="project-technology">
+                                SQL
+                            </span>
+
+                            <span class="project-technology">
+                                Modelagem de dados
+                            </span>
+
+                            <span class="project-technology">
+                                UX para dashboards
+                            </span>
+                        </div>
+
+                        <div class="button-group">
+                            <a
+                                class="button button-primary"
+                                href="#visao-geral"
+                            >
+                                Explorar estudo de caso
+                            </a>
+
+                            <a
+                                class="button button-secondary"
+                                href="../index.html#projetos"
+                            >
+                                Ver outros projetos
+                            </a>
+                        </div>
+
+                    </div>
+
+                    <figure class="project-cover-wrapper">
+                        <img
+                            class="project-cover"
+                            src="../assets/images/dashboards/finance-dashboard/finance-dashboard-cover.png"
+                            alt="Visão geral do Dashboard Financeiro desenvolvido por Felipe Goulart"
+                            width="1200"
+                            height="675"
+                            fetchpriority="high"
+                        >
+
+                        <figcaption class="project-cover-caption">
+                            Visão geral da solução desenvolvida no Power BI.
+                        </figcaption>
+                    </figure>
+
+                </div>
+            </div>
+        </section>
+
+
+        <!-- =================================================
+             NAVEGAÇÃO INTERNA
+        ================================================== -->
+
+        <nav
+            class="project-index"
+            aria-label="Seções do estudo de caso"
+        >
+            <div class="container">
+                <ul class="project-index-list">
+                    <li>
+                        <a href="#visao-geral">
+                            Visão geral
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="#desafio">
+                            Desafio
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="#indicadores">
+                            Indicadores
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="#paginas">
+                            Páginas
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="#arquitetura">
+                            Arquitetura
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="#tecnologias">
+                            Tecnologias
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="#localizacao">
+                            Localização
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="#aprendizados">
+                            Aprendizados
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+
+        <!-- =================================================
+             VISÃO GERAL
+        ================================================== -->
+
+        <section
+            class="case-section"
+            id="visao-geral"
+        >
+            <div class="container">
+
+                <div class="case-section-header">
+                    <span class="case-label">
+                        01 — Visão geral
+                    </span>
+
+                    <h2 class="case-title">
+                        Dados financeiros apresentados de forma simples,
+                        objetiva e acionável
+                    </h2>
+
+                    <p class="case-description">
+                        O projeto foi estruturado para oferecer uma visão
+                        consolidada da situação financeira, permitindo
+                        acompanhar receitas, despesas, fluxo de caixa,
+                        cartões de crédito e empréstimos.
+                    </p>
+                </div>
+
+                <div class="overview-grid">
+
+                    <div class="overview-content">
+                        <p>
+                            O <strong>Dashboard Financeiro</strong> centraliza
+                            informações que normalmente estariam distribuídas
+                            em diferentes planilhas, sistemas ou relatórios.
+                            A solução cria uma visão integrada do cenário
+                            financeiro e reduz o esforço necessário para
+                            interpretar os dados.
+                        </p>
+
+                        <p>
+                            A experiência foi construída com foco em
+                            <strong>clareza visual, consistência, navegação
+                            intuitiva e apoio à tomada de decisão</strong>.
+                            Cada página possui um objetivo analítico específico,
+                            mas mantém o mesmo padrão visual e estrutural.
+                        </p>
+
+                        <p>
+                            Além da versão original em Português, o dashboard
+                            também foi localizado para
+                            <strong>English (US)</strong>, incluindo títulos,
+                            indicadores, filtros, rótulos e descrições.
+                        </p>
+                    </div>
+
+                    <aside
+                        class="project-facts"
+                        aria-label="Informações principais do projeto"
+                    >
+                        <div class="project-fact">
+                            <span class="project-fact-label">
+                                Tipo de projeto
+                            </span>
+
+                            <span class="project-fact-value">
+                                Business Intelligence e análise financeira
+                            </span>
+                        </div>
+
+                        <div class="project-fact">
+                            <span class="project-fact-label">
+                                Ferramenta principal
+                            </span>
+
+                            <span class="project-fact-value">
+                                Microsoft Power BI
+                            </span>
+                        </div>
+
+                        <div class="project-fact">
+                            <span class="project-fact-label">
+                                Público
+                            </span>
+
+                            <span class="project-fact-value">
+                                Usuários que precisam acompanhar e interpretar
+                                sua situação financeira
+                            </span>
+                        </div>
+
+                        <div class="project-fact">
+                            <span class="project-fact-label">
+                                Idiomas
+                            </span>
+
+                            <span class="project-fact-value">
+                                Português e English (US)
+                            </span>
+                        </div>
+
+                        <div class="project-fact">
+                            <span class="project-fact-label">
+                                Status
+                            </span>
+
+                            <span class="project-fact-value">
+                                Desenvolvimento e localização concluídos
+                            </span>
+                        </div>
+                    </aside>
+
+                </div>
+            </div>
+        </section>
+
+
+        <!-- =================================================
+             DESAFIO
+        ================================================== -->
+
+        <section
+            class="case-section case-section-soft"
+            id="desafio"
+        >
+            <div class="container">
+
+                <div class="case-section-header">
+                    <span class="case-label">
+                        02 — Desafio
+                    </span>
+
+                    <h2 class="case-title">
+                        Transformar dados financeiros em uma narrativa visual
+                    </h2>
+
+                    <p class="case-description">
+                        O principal desafio foi organizar diferentes elementos
+                        financeiros em uma solução coerente, sem sobrecarregar
+                        o usuário com excesso de informações.
+                    </p>
+                </div>
+
+                <div class="challenge-grid">
+
+                    <article class="challenge-card">
+                        <span class="challenge-card-number">
+                            DESAFIO
+                        </span>
+
+                        <h3>
+                            Informações fragmentadas
+                        </h3>
+
+                        <p>
+                            Receitas, despesas, cartões, empréstimos e saldos
+                            podem estar distribuídos em fontes diferentes,
+                            dificultando a construção de uma visão financeira
+                            completa e confiável.
+                        </p>
+                    </article>
+
+                    <article class="challenge-card">
+                        <span class="challenge-card-number">
+                            SOLUÇÃO
+                        </span>
+
+                        <h3>
+                            Modelo analítico integrado
+                        </h3>
+
+                        <p>
+                            Os dados foram preparados, relacionados e
+                            organizados em um modelo que permite analisar o
+                            cenário geral e, ao mesmo tempo, explorar detalhes
+                            específicos de cada área financeira.
+                        </p>
+                    </article>
+
+                    <article class="challenge-card">
+                        <span class="challenge-card-number">
+                            EXPERIÊNCIA
+                        </span>
+
+                        <h3>
+                            Navegação simples e consistente
+                        </h3>
+
+                        <p>
+                            O layout utiliza hierarquia visual, indicadores,
+                            gráficos, filtros e cores consistentes para reduzir
+                            o esforço de interpretação em todas as páginas.
+                        </p>
+                    </article>
+
+                    <article class="challenge-card">
+                        <span class="challenge-card-number">
+                            RESULTADO
+                        </span>
+
+                        <h3>
+                            Decisões mais bem informadas
+                        </h3>
+
+                        <p>
+                            A solução ajuda a identificar tendências, períodos
+                            críticos, categorias relevantes e oportunidades de
+                            melhorar o planejamento financeiro.
+                        </p>
+                    </article>
+
+                </div>
+            </div>
+        </section>
+
+
+        <!-- =================================================
+             INDICADORES
+        ================================================== -->
+
+        <section
+            class="case-section"
+            id="indicadores"
+        >
+            <div class="container">
+
+                <div class="case-section-header">
+                    <span class="case-label">
+                        03 — Indicadores
+                    </span>
+
+                    <h2 class="case-title">
+                        Principais informações acompanhadas
+                    </h2>
+
+                    <p class="case-description">
+                        Os indicadores foram selecionados para representar a
+                        posição financeira atual e facilitar a identificação
+                        de variações, tendências e pontos de atenção.
+                    </p>
+                </div>
+
+                <div class="indicator-grid">
+
+                    <article class="indicator-card">
+                        <span
+                            class="indicator-icon"
+                            aria-hidden="true"
+                        >
+                            01
+                        </span>
+
+                        <h3>
+                            Receitas
+                        </h3>
+
+                        <p>
+                            Acompanhamento das entradas financeiras por período,
+                            categoria e fonte.
+                        </p>
+                    </article>
+
+                    <article class="indicator-card">
+                        <span
+                            class="indicator-icon"
+                            aria-hidden="true"
+                        >
+                            02
+                        </span>
+
+                        <h3>
+                            Despesas
+                        </h3>
+
+                        <p>
+                            Análise da evolução dos gastos e identificação das
+                            categorias de maior impacto.
+                        </p>
+                    </article>
+
+                    <article class="indicator-card">
+                        <span
+                            class="indicator-icon"
+                            aria-hidden="true"
+                        >
+                            03
+                        </span>
+
+                        <h3>
+                            Saldo financeiro
+                        </h3>
+
+                        <p>
+                            Comparação entre receitas e despesas para avaliar o
+                            resultado acumulado.
+                        </p>
+                    </article>
+
+                    <article class="indicator-card">
+                        <span
+                            class="indicator-icon"
+                            aria-hidden="true"
+                        >
+                            04
+                        </span>
+
+                        <h3>
+                            Fluxo de caixa
+                        </h3>
+
+                        <p>
+                            Visualização temporal das movimentações e da
+                            evolução do saldo.
+                        </p>
+                    </article>
+
+                    <article class="indicator-card">
+                        <span
+                            class="indicator-icon"
+                            aria-hidden="true"
+                        >
+                            05
+                        </span>
+
+                        <h3>
+                            Cartões de crédito
+                        </h3>
+
+                        <p>
+                            Controle de faturas, limites, utilização e gastos
+                            por cartão.
+                        </p>
+                    </article>
+
+                    <article class="indicator-card">
+                        <span
+                            class="indicator-icon"
+                            aria-hidden="true"
+                        >
+                            06
+                        </span>
+
+                        <h3>
+                            Empréstimos
+                        </h3>
+
+                        <p>
+                            Acompanhamento de valores contratados, parcelas,
+                            pagamentos e saldo devedor.
+                        </p>
+                    </article>
+
+                    <article class="indicator-card">
+                        <span
+                            class="indicator-icon"
+                            aria-hidden="true"
+                        >
+                            07
+                        </span>
+
+                        <h3>
+                            Categorias
+                        </h3>
+
+                        <p>
+                            Distribuição das movimentações financeiras por
+                            categoria de receita ou despesa.
+                        </p>
+                    </article>
+
+                    <article class="indicator-card">
+                        <span
+                            class="indicator-icon"
+                            aria-hidden="true"
+                        >
+                            08
+                        </span>
+
+                        <h3>
+                            Tendências
+                        </h3>
+
+                        <p>
+                            Identificação de padrões e mudanças no comportamento
+                            financeiro ao longo do tempo.
+                        </p>
+                    </article>
+
+                </div>
+            </div>
+        </section>
+
+
+        <!-- =================================================
+             PÁGINAS DO DASHBOARD
+        ================================================== -->
+
+        <section
+            class="case-section case-section-gradient"
+            id="paginas"
+        >
+            <div class="container">
+
+                <div class="case-section-header">
+                    <span class="case-label">
+                        04 — Páginas
+                    </span>
+
+                    <h2 class="case-title">
+                        Estrutura analítica do dashboard
+                    </h2>
+
+                    <p class="case-description">
+                        Cada página responde a um conjunto específico de
+                        perguntas, mantendo a experiência visual consistente
+                        em toda a solução.
+                    </p>
+                </div>
+
+                <div class="dashboard-pages-grid">
+
+                    <article class="dashboard-page-card">
+                        <div class="dashboard-page-visual">
+                            <span
+                                class="dashboard-page-number"
+                                aria-hidden="true"
+                            >
+                                01
+                            </span>
+
+                            <span class="dashboard-page-name">
+                                Overview
+                            </span>
+                        </div>
+
+                        <div class="dashboard-page-content">
+                            <h3>
+                                Visão geral
+                            </h3>
+
+                            <p>
+                                Resumo dos principais indicadores financeiros,
+                                evolução do saldo, receitas, despesas e
+                                distribuição das movimentações.
+                            </p>
+                        </div>
+                    </article>
+
+                    <article class="dashboard-page-card">
+                        <div class="dashboard-page-visual">
+                            <span
+                                class="dashboard-page-number"
+                                aria-hidden="true"
+                            >
+                                02
+                            </span>
+
+                            <span class="dashboard-page-name">
+                                Financial Flow
+                            </span>
+                        </div>
+
+                        <div class="dashboard-page-content">
+                            <h3>
+                                Fluxo financeiro
+                            </h3>
+
+                            <p>
+                                Análise das movimentações ao longo do tempo,
+                                destacando entradas, saídas, resultado e
+                                comportamento do saldo.
+                            </p>
+                        </div>
+                    </article>
+
+                    <article class="dashboard-page-card">
+                        <div class="dashboard-page-visual">
+                            <span
+                                class="dashboard-page-number"
+                                aria-hidden="true"
+                            >
+                                03
+                            </span>
+
+                            <span class="dashboard-page-name">
+                                Credit Cards
+                            </span>
+                        </div>
+
+                        <div class="dashboard-page-content">
+                            <h3>
+                                Cartões de crédito
+                            </h3>
+
+                            <p>
+                                Acompanhamento das faturas, limites disponíveis,
+                                utilização dos cartões e distribuição dos
+                                gastos.
+                            </p>
+                        </div>
+                    </article>
+
+                    <article class="dashboard-page-card">
+                        <div class="dashboard-page-visual">
+                            <span
+                                class="dashboard-page-number"
+                                aria-hidden="true"
+                            >
+                                04
+                            </span>
+
+                            <span class="dashboard-page-name">
+                                Loans
+                            </span>
+                        </div>
+
+                        <div class="dashboard-page-content">
+                            <h3>
+                                Empréstimos
+                            </h3>
+
+                            <p>
+                                Visão dos contratos, parcelas, pagamentos,
+                                prazos e valores ainda pendentes.
+                            </p>
+                        </div>
+                    </article>
+
+                    <article class="dashboard-page-card">
+                        <div class="dashboard-page-visual">
+                            <span
+                                class="dashboard-page-number"
+                                aria-hidden="true"
+                            >
+                                05
+                            </span>
+
+                            <span class="dashboard-page-name">
+                                Details
+                            </span>
+                        </div>
+
+                        <div class="dashboard-page-content">
+                            <h3>
+                                Detalhamento
+                            </h3>
+
+                            <p>
+                                Área dedicada à exploração detalhada das
+                                transações e à validação das informações
+                                apresentadas nos indicadores.
+                            </p>
+                        </div>
+                    </article>
+
+                    <article class="dashboard-page-card">
+                        <div class="dashboard-page-visual">
+                            <span
+                                class="dashboard-page-number"
+                                aria-hidden="true"
+                            >
+                                06
+                            </span>
+
+                            <span class="dashboard-page-name">
+                                Navigation
+                            </span>
+                        </div>
+
+                        <div class="dashboard-page-content">
+                            <h3>
+                                Navegação
+                            </h3>
+
+                            <p>
+                                Menus, filtros e controles desenhados para
+                                oferecer uma experiência clara entre as
+                                diferentes áreas do relatório.
+                            </p>
+                        </div>
+                    </article>
+
+                </div>
+            </div>
+        </section>
+
+
+        <!-- =================================================
+             ARQUITETURA
+        ================================================== -->
+
+        <section
+            class="case-section"
+            id="arquitetura"
+        >
+            <div class="container">
+
+                <div class="case-section-header">
+                    <span class="case-label">
+                        05 — Arquitetura
+                    </span>
+
+                    <h2 class="case-title">
+                        Do dado bruto à informação visual
+                    </h2>
+
+                    <p class="case-description">
+                        A construção do dashboard seguiu um fluxo organizado de
+                        preparação, modelagem, criação de métricas e
+                        visualização.
+                    </p>
+                </div>
+
+                <div class="architecture-flow">
+
+                    <article class="architecture-step">
+                        <span>
+                            Etapa 01
+                        </span>
+
+                        <h3>
+                            Fontes de dados
+                        </h3>
+
+                        <p>
+                            Dados de contas, transações, cartões, categorias e
+                            empréstimos.
+                        </p>
+                    </article>
+
+                    <span
+                        class="architecture-arrow"
+                        aria-hidden="true"
+                    >
+                        →
+                    </span>
+
+                    <article class="architecture-step">
+                        <span>
+                            Etapa 02
+                        </span>
+
+                        <h3>
+                            Power Query
+                        </h3>
+
+                        <p>
+                            Limpeza, padronização, transformação e validação dos
+                            dados.
+                        </p>
+                    </article>
+
+                    <span
+                        class="architecture-arrow"
+                        aria-hidden="true"
+                    >
+                        →
+                    </span>
+
+                    <article class="architecture-step">
+                        <span>
+                            Etapa 03
+                        </span>
+
+                        <h3>
+                            Modelo e DAX
+                        </h3>
+
+                        <p>
+                            Relacionamentos, tabelas de apoio e medidas
+                            analíticas.
+                        </p>
+                    </article>
+
+                    <span
+                        class="architecture-arrow"
+                        aria-hidden="true"
+                    >
+                        →
+                    </span>
+
+                    <article class="architecture-step">
+                        <span>
+                            Etapa 04
+                        </span>
+
+                        <h3>
+                            Power BI
+                        </h3>
+
+                        <p>
+                            Indicadores, gráficos, filtros, navegação e
+                            publicação.
+                        </p>
+                    </article>
+
+                </div>
+            </div>
+        </section>
+
+
+        <!-- =================================================
+             TECNOLOGIAS
+        ================================================== -->
+
+        <section
+            class="case-section case-section-soft"
+            id="tecnologias"
+        >
+            <div class="container">
+
+                <div class="case-section-header">
+                    <span class="case-label">
+                        06 — Tecnologias
+                    </span>
+
+                    <h2 class="case-title">
+                        Ferramentas e competências aplicadas
+                    </h2>
+
+                    <p class="case-description">
+                        O projeto combina preparação de dados, modelagem,
+                        cálculos analíticos, visualização e documentação.
+                    </p>
+                </div>
+
+                <div class="technology-grid">
+
+                    <article class="technology-card">
+                        <span class="technology-card-index">
+                            01
+                        </span>
+
+                        <h3>
+                            Power BI
+                        </h3>
+
+                        <p>
+                            Desenvolvimento do relatório, indicadores, gráficos,
+                            filtros, navegação e experiência visual.
+                        </p>
+                    </article>
+
+                    <article class="technology-card">
+                        <span class="technology-card-index">
+                            02
+                        </span>
+
+                        <h3>
+                            DAX
+                        </h3>
+
+                        <p>
+                            Criação de medidas, indicadores, comparações
+                            temporais e regras de negócio.
+                        </p>
+                    </article>
+
+                    <article class="technology-card">
+                        <span class="technology-card-index">
+                            03
+                        </span>
+
+                        <h3>
+                            Power Query
+                        </h3>
+
+                        <p>
+                            Tratamento, transformação, tipagem e padronização
+                            das fontes de dados.
+                        </p>
+                    </article>
+
+                    <article class="technology-card">
+                        <span class="technology-card-index">
+                            04
+                        </span>
+
+                        <h3>
+                            SQL
+                        </h3>
+
+                        <p>
+                            Consulta, organização e preparação das informações
+                            utilizadas no modelo analítico.
+                        </p>
+                    </article>
+
+                    <article class="technology-card">
+                        <span class="technology-card-index">
+                            05
+                        </span>
+
+                        <h3>
+                            Modelagem de dados
+                        </h3>
+
+                        <p>
+                            Organização das entidades, relacionamentos e
+                            dimensões para análise eficiente.
+                        </p>
+                    </article>
+
+                    <article class="technology-card">
+                        <span class="technology-card-index">
+                            06
+                        </span>
+
+                        <h3>
+                            Data visualization
+                        </h3>
+
+                        <p>
+                            Seleção de gráficos e elementos visuais conforme o
+                            objetivo de cada análise.
+                        </p>
+                    </article>
+
+                    <article class="technology-card">
+                        <span class="technology-card-index">
+                            07
+                        </span>
+
+                        <h3>
+                            UX para dashboards
+                        </h3>
+
+                        <p>
+                            Aplicação de hierarquia, contraste, consistência e
+                            navegação orientada ao usuário.
+                        </p>
+                    </article>
+
+                    <article class="technology-card">
+                        <span class="technology-card-index">
+                            08
+                        </span>
+
+                        <h3>
+                            Power BI Service
+                        </h3>
+
+                        <p>
+                            Publicação e disponibilização do relatório em
+                            ambiente online.
+                        </p>
+                    </article>
+
+                </div>
+            </div>
+        </section>
+
+
+        <!-- =================================================
+             LOCALIZAÇÃO
+        ================================================== -->
+
+        <section
+            class="case-section"
+            id="localizacao"
+        >
+            <div class="container">
+
+                <div class="case-section-header">
+                    <span class="case-label">
+                        07 — Localização
+                    </span>
+
+                    <h2 class="case-title">
+                        Experiência disponível em Português e English (US)
+                    </h2>
+
+                    <p class="case-description">
+                        A localização foi realizada respeitando terminologia
+                        financeira, padrões culturais e consistência entre
+                        todas as páginas do relatório.
+                    </p>
+                </div>
+
+                <div class="localization-grid">
+
+                    <article class="localization-card">
+                        <div class="localization-language">
+                            <h3>
+                                Português
+                            </h3>
+
+                            <span class="language-code">
+                                PT-BR
+                            </span>
+                        </div>
+
+                        <ul>
+                            <li>
+                                Títulos e indicadores em Português.
+                            </li>
+
+                            <li>
+                                Terminologia financeira adequada ao contexto.
+                            </li>
+
+                            <li>
+                                Formatação monetária e numérica brasileira.
+                            </li>
+
+                            <li>
+                                Navegação e filtros consistentes.
+                            </li>
+                        </ul>
+                    </article>
+
+                    <article class="localization-card">
+                        <div class="localization-language">
+                            <h3>
+                                English
+                            </h3>
+
+                            <span class="language-code">
+                                EN-US
+                            </span>
+                        </div>
+
+                        <ul>
+                            <li>
+                                Pages such as Financial Flow, Credit Cards and
+                                Loans localized to English.
+                            </li>
+
+                            <li>
+                                Financial terminology adapted to the US market.
+                            </li>
+
+                            <li>
+                                US currency and number formatting.
+                            </li>
+
+                            <li>
+                                Consistent labels, filters and visual hierarchy.
+                            </li>
+                        </ul>
+                    </article>
+
+                </div>
+            </div>
+        </section>
+
+
+        <!-- =================================================
+             APRENDIZADOS
+        ================================================== -->
+
+        <section
+            class="case-section case-section-gradient"
+            id="aprendizados"
+        >
+            <div class="container">
+
+                <div class="case-section-header">
+                    <span class="case-label">
+                        08 — Aprendizados
+                    </span>
+
+                    <h2 class="case-title">
+                        Competências fortalecidas durante o projeto
+                    </h2>
+
+                    <p class="case-description">
+                        O desenvolvimento da solução envolveu decisões técnicas,
+                        analíticas e visuais que ampliaram a qualidade do
+                        projeto final.
+                    </p>
+                </div>
+
+                <div class="learning-list">
+
+                    <article class="learning-item">
+                        <span class="learning-number">
+                            01
+                        </span>
+
+                        <div>
+                            <h3>
+                                Organização da narrativa analítica
+                            </h3>
+
+                            <p>
+                                Cada página deve responder a perguntas
+                                específicas e contribuir para uma visão
+                                integrada do cenário financeiro.
+                            </p>
+                        </div>
+                    </article>
+
+                    <article class="learning-item">
+                        <span class="learning-number">
+                            02
+                        </span>
+
+                        <div>
+                            <h3>
+                                Equilíbrio entre informação e simplicidade
+                            </h3>
+
+                            <p>
+                                A quantidade de indicadores precisa ser
+                                controlada para evitar ruído visual e facilitar
+                                a interpretação.
+                            </p>
+                        </div>
+                    </article>
+
+                    <article class="learning-item">
+                        <span class="learning-number">
+                            03
+                        </span>
+
+                        <div>
+                            <h3>
+                                Consistência visual
+                            </h3>
+
+                            <p>
+                                Cores, componentes, títulos, filtros e
+                                espaçamentos consistentes tornam a navegação
+                                mais previsível.
+                            </p>
+                        </div>
+                    </article>
+
+                    <article class="learning-item">
+                        <span class="learning-number">
+                            04
+                        </span>
+
+                        <div>
+                            <h3>
+                                Localização além da tradução
+                            </h3>
+
+                            <p>
+                                Adaptar um dashboard para outro idioma exige
+                                revisar terminologia, números, moedas, contexto
+                                cultural e espaço disponível nos componentes.
+                            </p>
+                        </div>
+                    </article>
+
+                </div>
+            </div>
+        </section>
+
+
+        <!-- =================================================
+             PRÓXIMAS EVOLUÇÕES
+        ================================================== -->
+
+        <section class="case-section">
+            <div class="container">
+
+                <div class="case-section-header">
+                    <span class="case-label">
+                        09 — Evolução
+                    </span>
+
+                    <h2 class="case-title">
+                        Possibilidades de expansão
+                    </h2>
+
+                    <p class="case-description">
+                        O projeto está concluído como estudo de caso, mas sua
+                        arquitetura permite novas funcionalidades e análises.
+                    </p>
+                </div>
+
+                <div class="next-steps-list">
+
+                    <article class="next-step">
+                        <span
+                            class="next-step-marker"
+                            aria-hidden="true"
+                        ></span>
+
+                        <div>
+                            <h3>
+                                Metas financeiras
+                            </h3>
+
+                            <p>
+                                Comparação entre valores realizados, planejados
+                                e projetados.
+                            </p>
+                        </div>
+                    </article>
+
+                    <article class="next-step">
+                        <span
+                            class="next-step-marker"
+                            aria-hidden="true"
+                        ></span>
+
+                        <div>
+                            <h3>
+                                Alertas de orçamento
+                            </h3>
+
+                            <p>
+                                Identificação automática de categorias próximas
+                                ou acima do limite definido.
+                            </p>
+                        </div>
+                    </article>
+
+                    <article class="next-step">
+                        <span
+                            class="next-step-marker"
+                            aria-hidden="true"
+                        ></span>
+
+                        <div>
+                            <h3>
+                                Previsão de fluxo de caixa
+                            </h3>
+
+                            <p>
+                                Estimativa dos saldos futuros com base em
+                                receitas e despesas recorrentes.
+                            </p>
+                        </div>
+                    </article>
+
+                    <article class="next-step">
+                        <span
+                            class="next-step-marker"
+                            aria-hidden="true"
+                        ></span>
+
+                        <div>
+                            <h3>
+                                Atualização automatizada
+                            </h3>
+
+                            <p>
+                                Integração com fontes externas e agendamento de
+                                atualização no Power BI Service.
+                            </p>
+                        </div>
+                    </article>
+
+                </div>
+            </div>
+        </section>
+
+
+        <!-- =================================================
+             CHAMADA FINAL
+        ================================================== -->
+
+        <section class="project-call-to-action">
+            <div class="container">
+
+                <div class="project-call-to-action-box">
+
+                    <div class="project-call-to-action-content">
+                        <span class="case-label">
+                            Final do estudo de caso
+                        </span>
+
+                        <h2>
+                            Dados bem apresentados geram decisões melhores
+                        </h2>
+
+                        <p>
+                            O Dashboard Financeiro demonstra a aplicação de
+                            Power BI, DAX, Power Query, SQL, modelagem de dados
+                            e design de informação na construção de uma solução
+                            analítica completa.
+                        </p>
+                    </div>
+
+                    <div class="project-call-to-action-actions">
+                        <a
+                            class="button button-primary"
+                            href="../index.html#contato"
+                        >
+                            Entrar em contato
+                        </a>
+
+                        <a
+                            class="button button-secondary"
+                            href="../index.html#projetos"
+                        >
+                            Outros projetos
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+
+    <!-- =====================================================
+         RODAPÉ
+    ====================================================== -->
+
+    <footer class="project-footer">
+        <div class="container project-footer-content">
+
+            <p>
+                © 2026 Felipe Goulart. Todos os direitos reservados.
+            </p>
+
+            <a href="../index.html">
+                Voltar para a página inicial ↑
+            </a>
+
+        </div>
+    </footer>
+
+</body>
+</html>
