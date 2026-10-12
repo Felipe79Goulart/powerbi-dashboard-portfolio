@@ -1,0 +1,2015 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Estudo de caso do Oracle Sales BI, dashboard de vendas bilíngue (PT-BR e EN-US) desenvolvido por Felipe Goulart com Oracle OCI, Power BI, DAX, Power Query e SQL.">
+    <meta name="author" content="Felipe Goulart">
+    <meta name="theme-color" content="#07131f">
+    <title>Oracle Sales BI | Dashboard de Vendas Bilíngue | Felipe Goulart</title>
+
+    <link rel="alternate" hreflang="pt-BR" href="./sales-dashboard.html">
+    <link rel="alternate" hreflang="en-US" href="./sales-dashboard-en.html">
+
+    <link rel="stylesheet" href="../assets/css/styles.css?v=1.2">
+
+    <style>
+        /* =====================================================
+           PROJECT PAGE
+        ===================================================== */
+
+        .project-page {
+            background: var(--color-background);
+        }
+
+
+        /* =====================================================
+           INTERNAL HEADER
+        ===================================================== */
+
+        .project-header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+
+            border-bottom: 1px solid var(--color-border);
+
+            background: rgba(7, 19, 31, 0.94);
+
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+        }
+
+        .project-navigation {
+            min-height: 74px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 30px;
+        }
+
+        .project-brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+
+            color: var(--color-text);
+
+            font-weight: 800;
+        }
+
+        .project-brand-symbol {
+            width: 38px;
+            height: 38px;
+
+            display: grid;
+            flex-shrink: 0;
+            place-items: center;
+
+            border-radius: 10px;
+
+            color: var(--color-background);
+            background: var(--color-primary);
+
+            font-size: 0.85rem;
+            font-weight: 900;
+
+            transition:
+                transform var(--transition),
+                background-color var(--transition);
+        }
+
+        .project-brand:hover .project-brand-symbol {
+            transform: rotate(-4deg) scale(1.05);
+            background: var(--color-primary-light);
+        }
+
+        .project-navigation-links {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .project-navigation-links a {
+            color: var(--color-text-soft);
+
+            font-size: 0.92rem;
+            font-weight: 700;
+
+            transition: color var(--transition);
+        }
+
+        .project-navigation-links a:hover {
+            color: var(--color-primary);
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-link-arrow {
+            transition: transform var(--transition);
+        }
+
+        .back-link:hover .back-link-arrow {
+            transform: translateX(-4px);
+        }
+
+        .language-link {
+            padding: 7px 10px;
+
+            border: 1px solid var(--color-border);
+            border-radius: 999px;
+
+            color: var(--color-primary) !important;
+
+            font-size: 0.72rem !important;
+            font-weight: 900 !important;
+            letter-spacing: 0.05em;
+        }
+
+        .language-link:hover {
+            border-color: rgba(255, 201, 40, 0.45);
+            background: rgba(255, 201, 40, 0.07);
+        }
+
+
+        /* =====================================================
+           PROJECT HERO
+        ===================================================== */
+
+        .project-hero {
+            position: relative;
+            overflow: hidden;
+
+            padding: 100px 0 80px;
+
+            background:
+                radial-gradient(
+                    circle at 88% 12%,
+                    rgba(69, 214, 168, 0.12),
+                    transparent 32%
+                ),
+                radial-gradient(
+                    circle at 10% 90%,
+                    rgba(255, 201, 40, 0.08),
+                    transparent 30%
+                ),
+                linear-gradient(
+                    145deg,
+                    #07131f,
+                    #0b2638 58%,
+                    #103d52
+                );
+        }
+
+        .project-hero::after {
+            content: "";
+
+            position: absolute;
+            right: -180px;
+            bottom: -260px;
+
+            width: 540px;
+            height: 540px;
+
+            border: 1px solid rgba(255, 201, 40, 0.16);
+            border-radius: 50%;
+
+            pointer-events: none;
+        }
+
+        .project-breadcrumb {
+            position: relative;
+            z-index: 2;
+
+            margin-bottom: 40px;
+
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+
+            color: var(--color-text-soft);
+
+            font-size: 0.84rem;
+            font-weight: 700;
+        }
+
+        .project-breadcrumb a {
+            transition: color var(--transition);
+        }
+
+        .project-breadcrumb a:hover {
+            color: var(--color-primary);
+        }
+
+        .project-breadcrumb-separator {
+            color: rgba(255, 255, 255, 0.35);
+        }
+
+        .project-hero-grid {
+            position: relative;
+            z-index: 2;
+
+            display: grid;
+            grid-template-columns: 1.02fr 0.98fr;
+            align-items: center;
+            gap: 70px;
+        }
+
+        .project-status-label {
+            width: fit-content;
+            margin-bottom: 24px;
+            padding: 8px 13px;
+
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+
+            border: 1px solid rgba(69, 214, 168, 0.32);
+            border-radius: 999px;
+
+            color: var(--color-accent);
+            background: rgba(69, 214, 168, 0.07);
+
+            font-size: 0.72rem;
+            font-weight: 900;
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+        }
+
+        .project-status-label::before {
+            content: "";
+
+            width: 8px;
+            height: 8px;
+
+            border-radius: 50%;
+
+            background: var(--color-accent);
+            box-shadow: 0 0 12px rgba(69, 214, 168, 0.8);
+        }
+
+        .project-hero-title {
+            max-width: 760px;
+            margin-bottom: 24px;
+
+            color: var(--color-text);
+
+            font-size: clamp(3rem, 7vw, 5.6rem);
+            font-weight: 750;
+            line-height: 0.98;
+            letter-spacing: -0.06em;
+        }
+
+        .project-hero-title span {
+            display: block;
+
+            color: var(--color-primary);
+        }
+
+        .project-hero-description {
+            max-width: 680px;
+            margin-bottom: 32px;
+
+            color: var(--color-text-soft);
+
+            font-size: clamp(1rem, 2vw, 1.16rem);
+            line-height: 1.75;
+        }
+
+        .project-technology-list {
+            margin-bottom: 36px;
+
+            display: flex;
+            flex-wrap: wrap;
+            gap: 9px;
+        }
+
+        .project-technology {
+            padding: 8px 12px;
+
+            border: 1px solid var(--color-border);
+            border-radius: 999px;
+
+            color: var(--color-text-soft);
+            background: rgba(255, 255, 255, 0.04);
+
+            font-size: 0.76rem;
+            font-weight: 800;
+        }
+
+
+        /* =====================================================
+           PROJECT COVER
+        ===================================================== */
+
+        .project-cover-wrapper {
+            position: relative;
+
+            padding: 12px;
+
+            border: 1px solid var(--color-border);
+            border-radius: 24px;
+
+            background: rgba(255, 255, 255, 0.045);
+
+            box-shadow: 0 30px 75px rgba(0, 0, 0, 0.4);
+
+            transform: rotate(1.2deg);
+        }
+
+        .project-cover-wrapper::before {
+            content: "";
+
+            position: absolute;
+            top: -16px;
+            right: 34px;
+            z-index: 2;
+
+            width: 82px;
+            height: 32px;
+
+            background: rgba(255, 201, 40, 0.82);
+
+            transform: rotate(4deg);
+        }
+
+        .project-cover {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+
+            display: block;
+
+            border-radius: 15px;
+
+            object-fit: cover;
+            object-position: center;
+
+            background: var(--color-surface);
+        }
+
+        .project-cover-caption {
+            padding: 14px 8px 4px;
+
+            color: var(--color-text-soft);
+
+            font-size: 0.76rem;
+            line-height: 1.5;
+            text-align: center;
+        }
+
+
+        /* =====================================================
+           INTERNAL PAGE INDEX
+        ===================================================== */
+
+        .project-index {
+            position: relative;
+            z-index: 10;
+
+            border-top: 1px solid var(--color-border);
+            border-bottom: 1px solid var(--color-border);
+
+            background: var(--color-background-soft);
+        }
+
+        .project-index-list {
+            min-height: 68px;
+
+            display: flex;
+            align-items: center;
+            gap: 26px;
+            overflow-x: auto;
+
+            list-style: none;
+
+            scrollbar-width: thin;
+        }
+
+        .project-index-list a {
+            color: var(--color-text-soft);
+
+            font-size: 0.84rem;
+            font-weight: 800;
+            white-space: nowrap;
+
+            transition: color var(--transition);
+        }
+
+        .project-index-list a:hover {
+            color: var(--color-primary);
+        }
+
+
+        /* =====================================================
+           SECTION STRUCTURE
+        ===================================================== */
+
+        .case-section {
+            padding: 96px 0;
+        }
+
+        .case-section-soft {
+            background: var(--color-background-soft);
+        }
+
+        .case-section-gradient {
+            background:
+                linear-gradient(
+                    145deg,
+                    #0d3043,
+                    #0a1f2e 58%,
+                    #07131f
+                );
+        }
+
+        .case-section-header {
+            max-width: 780px;
+            margin-bottom: 50px;
+        }
+
+        .case-label {
+            display: inline-block;
+            margin-bottom: 14px;
+
+            color: var(--color-primary);
+
+            font-size: 0.76rem;
+            font-weight: 900;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        .case-title {
+            margin-bottom: 20px;
+
+            color: var(--color-text);
+
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 750;
+            line-height: 1.08;
+            letter-spacing: -0.045em;
+        }
+
+        .case-description {
+            color: var(--color-text-soft);
+
+            font-size: 1.06rem;
+            line-height: 1.8;
+        }
+
+        .case-description + .case-description {
+            margin-top: 18px;
+        }
+
+
+        /* =====================================================
+           OVERVIEW
+        ===================================================== */
+
+        .overview-grid {
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: 70px;
+        }
+
+        .overview-content p {
+            margin-bottom: 20px;
+
+            color: var(--color-text-soft);
+
+            font-size: 1.02rem;
+            line-height: 1.8;
+        }
+
+        .overview-content strong {
+            color: var(--color-text);
+        }
+
+        .project-facts {
+            display: grid;
+            gap: 14px;
+        }
+
+        .project-fact {
+            padding: 20px;
+
+            border: 1px solid var(--color-border);
+            border-radius: 14px;
+
+            background: rgba(255, 255, 255, 0.035);
+        }
+
+        .project-fact-label {
+            display: block;
+            margin-bottom: 6px;
+
+            color: var(--color-primary);
+
+            font-size: 0.7rem;
+            font-weight: 900;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .project-fact-value {
+            color: var(--color-text);
+
+            font-size: 0.96rem;
+            font-weight: 700;
+            line-height: 1.5;
+        }
+
+
+        /* =====================================================
+           CHALLENGE AND OBJECTIVES
+        ===================================================== */
+
+        .challenge-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 24px;
+        }
+
+        .challenge-card {
+            padding: 34px;
+
+            border: 1px solid var(--color-border);
+            border-radius: var(--border-radius);
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(255, 255, 255, 0.055),
+                    rgba(255, 255, 255, 0.02)
+                );
+        }
+
+        .challenge-card-number {
+            display: block;
+            margin-bottom: 28px;
+
+            color: var(--color-primary);
+
+            font-size: 0.76rem;
+            font-weight: 900;
+        }
+
+        .challenge-card h3 {
+            margin-bottom: 14px;
+
+            color: var(--color-text);
+
+            font-size: 1.4rem;
+            line-height: 1.3;
+        }
+
+        .challenge-card p {
+            color: var(--color-text-soft);
+
+            line-height: 1.75;
+        }
+
+
+        /* =====================================================
+           INDICATORS
+        ===================================================== */
+
+        .indicator-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .indicator-card {
+            min-width: 0;
+            padding: 26px;
+
+            border: 1px solid var(--color-border);
+            border-radius: 16px;
+
+            background: rgba(255, 255, 255, 0.04);
+
+            transition:
+                transform var(--transition),
+                border-color var(--transition),
+                background-color var(--transition);
+        }
+
+        .indicator-card:hover {
+            transform: translateY(-5px);
+
+            border-color: rgba(255, 201, 40, 0.4);
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .indicator-icon {
+            width: 42px;
+            height: 42px;
+            margin-bottom: 22px;
+
+            display: grid;
+            place-items: center;
+
+            border-radius: 11px;
+
+            color: var(--color-background);
+            background: var(--color-primary);
+
+            font-size: 0.82rem;
+            font-weight: 900;
+        }
+
+        .indicator-card h3 {
+            margin-bottom: 9px;
+
+            color: var(--color-text);
+
+            font-size: 1rem;
+            line-height: 1.35;
+        }
+
+        .indicator-card p {
+            color: var(--color-text-soft);
+
+            font-size: 0.88rem;
+            line-height: 1.65;
+        }
+
+
+        /* =====================================================
+           DASHBOARD PAGES
+        ===================================================== */
+
+        .dashboard-pages-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 26px;
+        }
+
+        .dashboard-page-card {
+            min-width: 0;
+            overflow: hidden;
+
+            border: 1px solid var(--color-border);
+            border-radius: var(--border-radius);
+
+            background: var(--color-surface);
+
+            transition:
+                transform var(--transition),
+                border-color var(--transition),
+                box-shadow var(--transition);
+        }
+
+        .dashboard-page-card:hover {
+            transform: translateY(-7px);
+
+            border-color: rgba(255, 201, 40, 0.45);
+
+            box-shadow: 0 22px 48px rgba(0, 0, 0, 0.24);
+        }
+
+        .dashboard-page-visual {
+            position: relative;
+
+            height: 190px;
+            overflow: hidden;
+
+            display: grid;
+            place-items: center;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(255, 201, 40, 0.14),
+                    rgba(69, 214, 168, 0.08)
+                );
+        }
+
+        .dashboard-page-visual.dashboard-page-visual-image {
+            position: relative;
+
+            width: 100%;
+            height: auto;
+            aspect-ratio: 16 / 9;
+
+            display: block;
+            overflow: hidden;
+
+            background: #07131f;
+        }
+
+        .dashboard-page-image {
+            width: 100%;
+            height: 100%;
+
+            display: block;
+
+            object-fit: contain;
+            object-position: center;
+
+            background: #07131f;
+
+            transition:
+                transform 450ms ease,
+                filter 300ms ease;
+        }
+
+        .dashboard-page-card:hover .dashboard-page-image {
+            transform: scale(1.025);
+
+            filter:
+                saturate(1.06)
+                contrast(1.02);
+        }
+
+        .dashboard-page-visual-image::after {
+            content: "";
+
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+
+            background:
+                linear-gradient(
+                    to top,
+                    rgba(7, 19, 31, 0.9) 0%,
+                    rgba(7, 19, 31, 0.25) 30%,
+                    transparent 58%
+                );
+
+            pointer-events: none;
+        }
+
+        .dashboard-page-name {
+            position: absolute;
+            right: 18px;
+            bottom: 16px;
+            left: 18px;
+            z-index: 2;
+
+            margin: 0;
+
+            color: var(--color-primary);
+
+            font-size: 0.72rem;
+            font-weight: 900;
+            letter-spacing: 0.08em;
+            line-height: 1.4;
+            text-transform: uppercase;
+
+            pointer-events: none;
+        }
+
+        .dashboard-page-content {
+            padding: 24px;
+        }
+
+        .dashboard-page-content h3 {
+            margin-bottom: 11px;
+
+            color: var(--color-text);
+
+            font-size: 1.25rem;
+        }
+
+        .dashboard-page-content p {
+            color: var(--color-text-soft);
+
+            font-size: 0.92rem;
+            line-height: 1.7;
+        }
+
+
+        /* =====================================================
+           INTERACTIVE POWER BI DASHBOARD
+        ===================================================== */
+
+        .powerbi-embed-shell {
+            overflow: hidden;
+
+            border: 1px solid var(--color-border);
+            border-radius: 22px;
+
+            background: #07131f;
+
+            box-shadow: 0 28px 70px rgba(0, 0, 0, 0.34);
+        }
+
+        .powerbi-embed {
+            position: relative;
+
+            width: 100%;
+            aspect-ratio: 16 / 9;
+
+            overflow: hidden;
+
+            background: #07131f;
+        }
+
+        .powerbi-embed iframe,
+        .powerbi-frame {
+            position: absolute;
+            inset: 0;
+
+            width: 100% !important;
+            height: 100% !important;
+
+            display: block;
+
+            border: 0;
+
+            background: #07131f;
+        }
+
+        .powerbi-embed-footer {
+            min-height: 68px;
+            padding: 16px 20px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+
+            border-top: 1px solid var(--color-border);
+
+            background: rgba(255, 255, 255, 0.035);
+        }
+
+        .powerbi-embed-footer p {
+            color: var(--color-text-soft);
+
+            font-size: 0.82rem;
+            line-height: 1.6;
+        }
+
+        .powerbi-embed-status {
+            flex-shrink: 0;
+
+            padding: 8px 12px;
+
+            border: 1px solid rgba(69, 214, 168, 0.3);
+            border-radius: 999px;
+
+            color: var(--color-accent);
+            background: rgba(69, 214, 168, 0.06);
+
+            font-size: 0.68rem;
+            font-weight: 900;
+            letter-spacing: 0.06em;
+            line-height: 1;
+            text-transform: uppercase;
+        }
+
+        .powerbi-embed-status::before {
+            content: "";
+
+            width: 7px;
+            height: 7px;
+            margin-right: 7px;
+
+            display: inline-block;
+
+            border-radius: 50%;
+
+            background: var(--color-accent);
+            box-shadow: 0 0 10px rgba(69, 214, 168, 0.65);
+        }
+
+        .powerbi-noscript {
+            margin-top: 18px;
+            padding: 16px;
+
+            border: 1px solid rgba(255, 201, 40, 0.25);
+            border-radius: 12px;
+
+            color: var(--color-text-soft);
+            background: rgba(255, 201, 40, 0.05);
+
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+
+        /* =====================================================
+           ARCHITECTURE
+        ===================================================== */
+
+        .architecture-flow {
+            display: grid;
+            grid-template-columns:
+                minmax(0, 1fr)
+                auto
+                minmax(0, 1fr)
+                auto
+                minmax(0, 1fr)
+                auto
+                minmax(0, 1fr);
+
+            align-items: center;
+            gap: 14px;
+        }
+
+        .architecture-step {
+            min-height: 170px;
+            padding: 24px;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+
+            border: 1px solid var(--color-border);
+            border-radius: 15px;
+
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .architecture-step span {
+            display: block;
+            margin-bottom: 10px;
+
+            color: var(--color-primary);
+
+            font-size: 0.7rem;
+            font-weight: 900;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .architecture-step h3 {
+            margin-bottom: 8px;
+
+            color: var(--color-text);
+
+            font-size: 1rem;
+        }
+
+        .architecture-step p {
+            color: var(--color-text-soft);
+
+            font-size: 0.84rem;
+            line-height: 1.6;
+        }
+
+        .architecture-arrow {
+            color: var(--color-primary);
+
+            font-size: 1.5rem;
+            font-weight: 900;
+        }
+
+
+        /* =====================================================
+           TECHNOLOGIES
+        ===================================================== */
+
+        .technology-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .technology-card {
+            min-width: 0;
+            padding: 26px;
+
+            border: 1px solid var(--color-border);
+            border-radius: 15px;
+
+            background: rgba(255, 255, 255, 0.035);
+        }
+
+        .technology-card-index {
+            display: block;
+            margin-bottom: 24px;
+
+            color: var(--color-primary);
+
+            font-size: 0.72rem;
+            font-weight: 900;
+        }
+
+        .technology-card h3 {
+            margin-bottom: 9px;
+
+            color: var(--color-text);
+
+            font-size: 1.08rem;
+        }
+
+        .technology-card p {
+            color: var(--color-text-soft);
+
+            font-size: 0.88rem;
+            line-height: 1.65;
+        }
+
+
+        /* =====================================================
+           LOCALIZATION
+        ===================================================== */
+
+        .localization-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 24px;
+        }
+
+        .localization-card {
+            padding: 34px;
+
+            border: 1px solid var(--color-border);
+            border-radius: var(--border-radius);
+
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .localization-language {
+            margin-bottom: 24px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .localization-language h3 {
+            color: var(--color-text);
+
+            font-size: 1.35rem;
+        }
+
+        .language-code {
+            padding: 7px 10px;
+
+            border: 1px solid var(--color-border);
+            border-radius: 999px;
+
+            color: var(--color-primary);
+
+            font-size: 0.7rem;
+            font-weight: 900;
+        }
+
+        .localization-card ul {
+            display: grid;
+            gap: 12px;
+
+            list-style: none;
+        }
+
+        .localization-card li {
+            position: relative;
+
+            padding-left: 23px;
+
+            color: var(--color-text-soft);
+
+            font-size: 0.94rem;
+            line-height: 1.6;
+        }
+
+        .localization-card li::before {
+            content: "✓";
+
+            position: absolute;
+            top: 0;
+            left: 0;
+
+            color: var(--color-accent);
+
+            font-weight: 900;
+        }
+
+
+        /* =====================================================
+           LESSONS LEARNED
+        ===================================================== */
+
+        .learning-list {
+            display: grid;
+            gap: 14px;
+        }
+
+        .learning-item {
+            padding: 24px;
+
+            display: grid;
+            grid-template-columns: auto 1fr;
+            align-items: start;
+            gap: 20px;
+
+            border: 1px solid var(--color-border);
+            border-radius: 14px;
+
+            background: rgba(255, 255, 255, 0.035);
+        }
+
+        .learning-number {
+            width: 38px;
+            height: 38px;
+
+            display: grid;
+            place-items: center;
+
+            border-radius: 10px;
+
+            color: var(--color-background);
+            background: var(--color-primary);
+
+            font-size: 0.78rem;
+            font-weight: 900;
+        }
+
+        .learning-item h3 {
+            margin-bottom: 7px;
+
+            color: var(--color-text);
+
+            font-size: 1.05rem;
+        }
+
+        .learning-item p {
+            color: var(--color-text-soft);
+
+            font-size: 0.92rem;
+            line-height: 1.7;
+        }
+
+
+        /* =====================================================
+           NEXT STEPS
+        ===================================================== */
+
+        .next-steps-list {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .next-step {
+            padding: 22px;
+
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+
+            border: 1px solid var(--color-border);
+            border-radius: 13px;
+
+            background: rgba(255, 255, 255, 0.035);
+        }
+
+        .next-step-marker {
+            width: 10px;
+            height: 10px;
+            margin-top: 7px;
+
+            flex-shrink: 0;
+
+            border-radius: 50%;
+
+            background: var(--color-primary);
+            box-shadow: 0 0 13px rgba(255, 201, 40, 0.55);
+        }
+
+        .next-step h3 {
+            margin-bottom: 5px;
+
+            color: var(--color-text);
+
+            font-size: 0.98rem;
+        }
+
+        .next-step p {
+            color: var(--color-text-soft);
+
+            font-size: 0.88rem;
+            line-height: 1.6;
+        }
+
+
+        /* =====================================================
+           FINAL CALL TO ACTION
+        ===================================================== */
+
+        .project-call-to-action {
+            padding: 96px 0;
+        }
+
+        .project-call-to-action-box {
+            padding: 70px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 60px;
+
+            border: 1px solid rgba(255, 201, 40, 0.28);
+            border-radius: 24px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(255, 201, 40, 0.11),
+                    rgba(69, 214, 168, 0.055)
+                );
+        }
+
+        .project-call-to-action-content {
+            max-width: 700px;
+        }
+
+        .project-call-to-action h2 {
+            margin-bottom: 14px;
+
+            color: var(--color-text);
+
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            line-height: 1.08;
+            letter-spacing: -0.045em;
+        }
+
+        .project-call-to-action p {
+            color: var(--color-text-soft);
+
+            line-height: 1.75;
+        }
+
+        .project-call-to-action-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+
+        /* =====================================================
+           PROJECT FOOTER
+        ===================================================== */
+
+        .project-footer {
+            padding: 30px 0;
+
+            border-top: 1px solid var(--color-border);
+
+            background: var(--color-background);
+        }
+
+        .project-footer-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+
+            color: var(--color-text-soft);
+
+            font-size: 0.84rem;
+        }
+
+        .project-footer-content a {
+            color: var(--color-text-soft);
+
+            font-weight: 800;
+
+            transition: color var(--transition);
+        }
+
+        .project-footer-content a:hover {
+            color: var(--color-primary);
+        }
+
+
+        /* =====================================================
+           RESPONSIVE LAYOUT
+        ===================================================== */
+
+        @media (max-width: 1080px) {
+            .project-hero-grid {
+                gap: 48px;
+            }
+
+            .indicator-grid,
+            .technology-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .architecture-flow {
+                grid-template-columns: 1fr;
+            }
+
+            .architecture-step {
+                min-height: auto;
+            }
+
+            .architecture-arrow {
+                transform: rotate(90deg);
+
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 920px) {
+            .project-hero-grid,
+            .overview-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .project-cover-wrapper {
+                max-width: 720px;
+
+                transform: none;
+            }
+
+            .dashboard-pages-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .project-call-to-action-box {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .project-navigation {
+                padding: 14px 0;
+
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .project-navigation-links {
+                width: 100%;
+                padding-bottom: 4px;
+
+                gap: 18px;
+                overflow-x: auto;
+            }
+
+            .project-navigation-links a {
+                white-space: nowrap;
+            }
+
+            .project-hero {
+                padding: 72px 0 64px;
+            }
+
+            .case-section {
+                padding: 72px 0;
+            }
+
+            .challenge-grid,
+            .dashboard-pages-grid,
+            .localization-grid,
+            .next-steps-list {
+                grid-template-columns: 1fr;
+            }
+
+            .powerbi-embed {
+                min-height: 520px;
+                aspect-ratio: auto;
+            }
+
+            .powerbi-embed-footer {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .project-call-to-action {
+                padding: 72px 0;
+            }
+
+            .project-call-to-action-box {
+                padding: 42px 30px;
+            }
+
+            .project-footer-content {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .indicator-grid,
+            .technology-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .project-hero-title {
+                font-size: clamp(2.8rem, 15vw, 4rem);
+            }
+
+            .challenge-card,
+            .localization-card {
+                padding: 26px;
+            }
+
+            .dashboard-page-content {
+                padding: 21px;
+            }
+
+            .powerbi-embed {
+                min-height: 480px;
+            }
+
+            .powerbi-embed-footer {
+                padding: 15px;
+            }
+
+            .learning-item {
+                grid-template-columns: 1fr;
+            }
+
+            .project-call-to-action-box {
+                padding: 35px 24px;
+            }
+
+            .project-call-to-action-actions {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .project-call-to-action-actions .button {
+                width: 100%;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .project-cover-wrapper,
+            .dashboard-page-card:hover,
+            .dashboard-page-card:hover .dashboard-page-image,
+            .indicator-card:hover {
+                transform: none;
+            }
+        }
+    </style>
+</head>
+
+<body class="project-page">
+    <a class="skip-link" href="#conteudo-principal">Ir para o conteúdo principal</a>
+
+    <header class="project-header">
+        <div class="container project-navigation">
+            <a class="project-brand" href="../index.html" aria-label="Voltar para a página inicial de Felipe Goulart">
+                <span class="project-brand-symbol" aria-hidden="true">FG</span>
+                <span>Felipe Goulart</span>
+            </a>
+            <nav class="project-navigation-links" aria-label="Navegação do projeto">
+                <a class="back-link" href="../index.html#projetos">
+                    <span class="back-link-arrow" aria-hidden="true">←</span>
+                    Voltar aos projetos
+                </a>
+                <a href="#dashboard-interativo">Dashboard interativo</a>
+                <a class="language-link" href="./sales-dashboard-en.html" lang="en-US" hreflang="en-US" aria-label="View this case study in English">EN</a>
+            </nav>
+        </div>
+    </header>
+
+    <main id="conteudo-principal">
+
+        <section class="project-hero">
+            <div class="container">
+                <nav class="project-breadcrumb" aria-label="Caminho de navegação">
+                    <a href="../index.html">Início</a>
+                    <span class="project-breadcrumb-separator" aria-hidden="true">/</span>
+                    <a href="../index.html#projetos">Projetos</a>
+                    <span class="project-breadcrumb-separator" aria-hidden="true">/</span>
+                    <span aria-current="page">Oracle Sales BI</span>
+                </nav>
+                <div class="project-hero-grid">
+                    <div class="project-hero-content">
+                        <span class="project-status-label">Projeto concluído</span>
+                        <h1 class="project-hero-title">Oracle <span>Sales BI</span></h1>
+                        <p class="project-hero-description">Dashboard de vendas bilíngue construído sobre Oracle OCI. Acompanha faturamento, pedidos, custos, lucro, clientes e metas em Português e Inglês, com moeda e formatação adaptadas a cada idioma.</p>
+                        <div class="project-technology-list" aria-label="Tecnologias utilizadas">
+                            <span class="project-technology">Power BI</span>
+                            <span class="project-technology">DAX</span>
+                            <span class="project-technology">Power Query</span>
+                            <span class="project-technology">Oracle SQL</span>
+                            <span class="project-technology">Modelagem de dados</span>
+                            <span class="project-technology">Localização PT/EN</span>
+                        </div>
+                        <div class="button-group">
+                            <a class="button button-primary" href="#dashboard-interativo">Explorar dashboard interativo <span aria-hidden="true">↓</span></a>
+                            <a class="button button-secondary" href="../index.html#projetos">Ver outros projetos</a>
+                        </div>
+                    </div>
+                    <figure class="project-cover-wrapper">
+                        <img class="project-cover" src="../assets/images/dashboards/oracle-sales/Capa_PT-BR.png" alt="Visão geral do Oracle Sales BI, dashboard de vendas bilíngue desenvolvido por Felipe Goulart" width="1200" height="675" fetchpriority="high">
+                        <figcaption class="project-cover-caption">Visão geral das vendas, com indicadores, gráficos e filtros interativos.</figcaption>
+                    </figure>
+                </div>
+            </div>
+        </section>
+
+        <nav class="project-index" aria-label="Seções do estudo de caso">
+            <div class="container">
+                <ul class="project-index-list">
+                    <li><a href="#visao-geral">Visão geral</a></li>
+                    <li><a href="#desafio">Desafio</a></li>
+                    <li><a href="#indicadores">Indicadores</a></li>
+                    <li><a href="#paginas">Páginas</a></li>
+                    <li><a href="#dashboard-interativo">Dashboard interativo</a></li>
+                    <li><a href="#arquitetura">Arquitetura</a></li>
+                    <li><a href="#tecnologias">Tecnologias</a></li>
+                    <li><a href="#localizacao">Localização</a></li>
+                    <li><a href="#aprendizados">Aprendizados</a></li>
+                    <li><a href="#evolucao">Evolução</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <section class="case-section" id="visao-geral">
+            <div class="container">
+                <div class="case-section-header">
+                    <span class="case-label">01 — Visão geral</span>
+                    <h2 class="case-title">Da venda ao lucro, em dois idiomas e duas moedas</h2>
+                    <p class="case-description">O projeto reúne em um único relatório Power BI o acompanhamento de vendas, pedidos, custos, lucro, clientes e metas, com idioma, moeda e formatação definidos pela seleção do usuário.</p>
+                </div>
+                <div class="overview-grid">
+                    <div class="overview-content">
+                        <p>O <strong>Oracle Sales BI</strong> parte de um banco Oracle OCI e organiza os dados em um modelo dimensional, com tabela fato no grão de item de pedido, dimensões de tempo, cliente, produto, canal, vendedor e status, além de uma tabela de metas por vendedor.</p>
+                        <p>Todo o relatório existe em <strong>Português (PT-BR) e Inglês (EN-US) no mesmo arquivo</strong>. Títulos, rótulos, filtros e eixos dinâmicos mudam com o idioma, e a moeda acompanha a escolha: reais no PT-BR e dólares no EN-US, convertidos pela cotação PTAX do Banco Central do dia da venda.</p>
+                        <p>O relatório foi publicado no <strong>Power BI Service</strong>, com atualização diária agendada e a cotação PTAX obtida por conexão Web via gateway.</p>
+                    </div>
+                    <aside class="project-facts" aria-label="Informações principais do projeto">
+                        <div class="project-fact">
+                            <span class="project-fact-label">Tipo de projeto</span>
+                            <span class="project-fact-value">Business Intelligence e análise de vendas</span>
+                        </div>
+                        <div class="project-fact">
+                            <span class="project-fact-label">Ferramenta principal</span>
+                            <span class="project-fact-value">Microsoft Power BI</span>
+                        </div>
+                        <div class="project-fact">
+                            <span class="project-fact-label">Fontes de dados</span>
+                            <span class="project-fact-value">Banco Oracle OCI e API PTAX do Banco Central do Brasil</span>
+                        </div>
+                        <div class="project-fact">
+                            <span class="project-fact-label">Idiomas</span>
+                            <span class="project-fact-value">Português (PT-BR) e English (EN-US) no mesmo relatório</span>
+                        </div>
+                        <div class="project-fact">
+                            <span class="project-fact-label">Status</span>
+                            <span class="project-fact-value">Desenvolvimento e publicação concluídos</span>
+                        </div>
+                    </aside>
+                </div>
+            </div>
+        </section>
+
+        <section class="case-section case-section-soft" id="desafio">
+            <div class="container">
+                <div class="case-section-header">
+                    <span class="case-label">02 — Desafio</span>
+                    <h2 class="case-title">Atender dois idiomas e duas moedas sem duplicar o relatório</h2>
+                    <p class="case-description">O principal desafio foi manter um único modelo e um único conjunto de páginas, com textos, formatos e moeda adequados a leitores brasileiros e internacionais.</p>
+                </div>
+                <div class="challenge-grid">
+                    <article class="challenge-card">
+                        <span class="challenge-card-number">DESAFIO</span>
+                        <h3>Um relatório, dois idiomas e duas moedas</h3>
+                        <p>Evitar duas cópias do relatório: o mesmo modelo precisa servir a leitores em português e inglês, com textos, formatos numéricos e moeda adequados a cada um.</p>
+                    </article>
+                    <article class="challenge-card">
+                        <span class="challenge-card-number">SOLUÇÃO</span>
+                        <h3>Modelo bilíngue com parâmetros de campo</h3>
+                        <p>Tabelas de parâmetros, catálogo de traduções e grupos de cálculo trocam rótulos, dimensões, métricas, moeda e formatos conforme o idioma selecionado.</p>
+                    </article>
+                    <article class="challenge-card">
+                        <span class="challenge-card-number">EXPERIÊNCIA</span>
+                        <h3>Navegação consistente em 10 páginas</h3>
+                        <p>Cada página responde a uma pergunta específica (vendas, pedidos, custos, lucros, clientes, metas e tempo), com o mesmo layout, filtros e botões de navegação.</p>
+                    </article>
+                    <article class="challenge-card">
+                        <span class="challenge-card-number">RESULTADO</span>
+                        <h3>Do faturamento bruto ao lucro por vendedor</h3>
+                        <p>A análise percorre o caminho completo: bruto, descontos, cancelamentos, devoluções, líquido, custos, lucro e atingimento das metas.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="case-section" id="indicadores">
+            <div class="container">
+                <div class="case-section-header">
+                    <span class="case-label">03 — Indicadores</span>
+                    <h2 class="case-title">Principais informações acompanhadas</h2>
+                    <p class="case-description">Os indicadores cobrem o caminho entre a venda e o resultado, com comparações de período e metas para facilitar a leitura de variações e pontos de atenção.</p>
+                </div>
+                <div class="indicator-grid">
+                    <article class="indicator-card">
+                        <span class="indicator-icon" aria-hidden="true">01</span>
+                        <h3>Faturamento bruto e líquido</h3>
+                        <p>Do bruto ao líquido, com waterfall que separa descontos, cancelamentos e devoluções.</p>
+                    </article>
+                    <article class="indicator-card">
+                        <span class="indicator-icon" aria-hidden="true">02</span>
+                        <h3>Pedidos e ticket médio</h3>
+                        <p>Pedidos válidos, itens e ticket médio, com variação contra o mês e o ano anteriores.</p>
+                    </article>
+                    <article class="indicator-card">
+                        <span class="indicator-icon" aria-hidden="true">03</span>
+                        <h3>Custos</h3>
+                        <p>Custo total, por pedido e por unidade, percentual sobre o faturamento e custo perdido.</p>
+                    </article>
+                    <article class="indicator-card">
+                        <span class="indicator-icon" aria-hidden="true">04</span>
+                        <h3>Lucro e margem</h3>
+                        <p>Lucro total, por pedido e por unidade, margem e lucro perdido em cancelamentos e devoluções.</p>
+                    </article>
+                    <article class="indicator-card">
+                        <span class="indicator-icon" aria-hidden="true">05</span>
+                        <h3>Clientes</h3>
+                        <p>Clientes atendidos, faturamento por cliente, cliente top, concentração (Pareto) e mapa por região.</p>
+                    </article>
+                    <article class="indicator-card">
+                        <span class="indicator-icon" aria-hidden="true">06</span>
+                        <h3>Metas</h3>
+                        <p>Meta, realizado, gap e atingimento por vendedor, equipe e região, com meta proporcional no mês parcial.</p>
+                    </article>
+                    <article class="indicator-card">
+                        <span class="indicator-icon" aria-hidden="true">07</span>
+                        <h3>Comparativos temporais</h3>
+                        <p>Mesmo período do ano anterior, acumulado no ano, média diária e sazonalidade mensal.</p>
+                    </article>
+                    <article class="indicator-card">
+                        <span class="indicator-icon" aria-hidden="true">08</span>
+                        <h3>Dimensões dinâmicas</h3>
+                        <p>Quebra por 11 dimensões, como categoria, produto, canal e vendedor, escolhida pelo usuário.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="case-section case-section-gradient" id="paginas">
+            <div class="container">
+                <div class="case-section-header">
+                    <span class="case-label">04 — Páginas</span>
+                    <h2 class="case-title">Estrutura analítica do dashboard</h2>
+                    <p class="case-description">Cada página responde a um conjunto específico de perguntas, mantendo a experiência visual consistente em toda a solução.</p>
+                </div>
+                <div class="dashboard-pages-grid">
+                    <article class="dashboard-page-card">
+                        <figure class="dashboard-page-visual dashboard-page-visual-image">
+                            <img class="dashboard-page-image" src="../assets/images/dashboards/oracle-sales/00_VisaoGeral.png" alt="Página Visão geral do Oracle Sales BI" width="1200" height="675" loading="lazy">
+                            <figcaption class="dashboard-page-name">Visão Geral</figcaption>
+                        </figure>
+                        <div class="dashboard-page-content">
+                            <h3>Visão geral</h3>
+                            <p>Resumo dos principais indicadores de vendas, com filtros de canal, status, período e idioma e navegação para todas as páginas.</p>
+                        </div>
+                    </article>
+                    <article class="dashboard-page-card">
+                        <figure class="dashboard-page-visual dashboard-page-visual-image">
+                            <img class="dashboard-page-image" src="../assets/images/dashboards/oracle-sales/01_Vendas.png" alt="Página Vendas do Oracle Sales BI" width="1200" height="675" loading="lazy">
+                            <figcaption class="dashboard-page-name">Vendas</figcaption>
+                        </figure>
+                        <div class="dashboard-page-content">
+                            <h3>Vendas</h3>
+                            <p>Passagem do faturamento bruto ao líquido em um waterfall bilíngue, e detalhamento por 11 dimensões escolhidas pelo usuário.</p>
+                        </div>
+                    </article>
+                    <article class="dashboard-page-card">
+                        <figure class="dashboard-page-visual dashboard-page-visual-image">
+                            <img class="dashboard-page-image" src="../assets/images/dashboards/oracle-sales/02_Pedidos.png" alt="Página Pedidos do Oracle Sales BI" width="1200" height="675" loading="lazy">
+                            <figcaption class="dashboard-page-name">Pedidos</figcaption>
+                        </figure>
+                        <div class="dashboard-page-content">
+                            <h3>Pedidos</h3>
+                            <p>Volume de pedidos, ticket médio e evolução mensal, com recortes por status, canal e dia da semana.</p>
+                        </div>
+                    </article>
+                    <article class="dashboard-page-card">
+                        <figure class="dashboard-page-visual dashboard-page-visual-image">
+                            <img class="dashboard-page-image" src="../assets/images/dashboards/oracle-sales/03_Custos.png" alt="Página Custos do Oracle Sales BI" width="1200" height="675" loading="lazy">
+                            <figcaption class="dashboard-page-name">Custos</figcaption>
+                        </figure>
+                        <div class="dashboard-page-content">
+                            <h3>Custos</h3>
+                            <p>Custo total, custo por pedido e por unidade, peso sobre o faturamento e custos perdidos em cancelamentos e devoluções.</p>
+                        </div>
+                    </article>
+                    <article class="dashboard-page-card">
+                        <figure class="dashboard-page-visual dashboard-page-visual-image">
+                            <img class="dashboard-page-image" src="../assets/images/dashboards/oracle-sales/04_Lucros.png" alt="Página Lucros do Oracle Sales BI" width="1200" height="675" loading="lazy">
+                            <figcaption class="dashboard-page-name">Lucros</figcaption>
+                        </figure>
+                        <div class="dashboard-page-content">
+                            <h3>Lucros</h3>
+                            <p>Lucro, margem e lucro perdido, do faturamento líquido ao resultado, por categoria, canal e produto.</p>
+                        </div>
+                    </article>
+                    <article class="dashboard-page-card">
+                        <figure class="dashboard-page-visual dashboard-page-visual-image">
+                            <img class="dashboard-page-image" src="../assets/images/dashboards/oracle-sales/05_Clientes.png" alt="Página Clientes do Oracle Sales BI" width="1200" height="675" loading="lazy">
+                            <figcaption class="dashboard-page-name">Clientes</figcaption>
+                        </figure>
+                        <div class="dashboard-page-content">
+                            <h3>Clientes</h3>
+                            <p>Concentração de faturamento em Pareto, ranking, segmentos e mapa de clientes por região.</p>
+                        </div>
+                    </article>
+                    <article class="dashboard-page-card">
+                        <figure class="dashboard-page-visual dashboard-page-visual-image">
+                            <img class="dashboard-page-image" src="../assets/images/dashboards/oracle-sales/06_Metas.png" alt="Página Metas do Oracle Sales BI" width="1200" height="675" loading="lazy">
+                            <figcaption class="dashboard-page-name">Metas</figcaption>
+                        </figure>
+                        <div class="dashboard-page-content">
+                            <h3>Metas</h3>
+                            <p>Meta, realizado e atingimento por vendedor, equipe e região, com evolução mensal e meta proporcional no mês parcial.</p>
+                        </div>
+                    </article>
+                    <article class="dashboard-page-card">
+                        <figure class="dashboard-page-visual dashboard-page-visual-image">
+                            <img class="dashboard-page-image" src="../assets/images/dashboards/oracle-sales/07_InteligenciaDeTempo.png" alt="Página Inteligência de tempo do Oracle Sales BI" width="1200" height="675" loading="lazy">
+                            <figcaption class="dashboard-page-name">Inteligência de Tempo</figcaption>
+                        </figure>
+                        <div class="dashboard-page-content">
+                            <h3>Inteligência de tempo</h3>
+                            <p>Comparativo com o mesmo período do ano anterior, acumulado no ano, média diária e sazonalidade.</p>
+                        </div>
+                    </article>
+                    <article class="dashboard-page-card">
+                        <figure class="dashboard-page-visual dashboard-page-visual-image">
+                            <img class="dashboard-page-image" src="../assets/images/dashboards/oracle-sales/08_Traducoes.png" alt="Página Traduções do Oracle Sales BI" width="1200" height="675" loading="lazy">
+                            <figcaption class="dashboard-page-name">Traduções</figcaption>
+                        </figure>
+                        <div class="dashboard-page-content">
+                            <h3>Traduções</h3>
+                            <p>Catálogo de traduções do relatório, com filtros bilíngues e lista de itens pendentes de revisão.</p>
+                        </div>
+                    </article>
+                    <article class="dashboard-page-card">
+                        <figure class="dashboard-page-visual dashboard-page-visual-image">
+                            <img class="dashboard-page-image" src="../assets/images/dashboards/oracle-sales/09_Formatacao.png" alt="Página Formatação do Oracle Sales BI" width="1200" height="675" loading="lazy">
+                            <figcaption class="dashboard-page-name">Formatação</figcaption>
+                        </figure>
+                        <div class="dashboard-page-content">
+                            <h3>Formatação</h3>
+                            <p>Painel de câmbio PTAX, verificação da conversão BRL/USD e regras de formatação por idioma.</p>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="case-section" id="dashboard-interativo">
+            <div class="container">
+                <div class="case-section-header">
+                    <span class="case-label">05 — Dashboard interativo</span>
+                    <h2 class="case-title">Explore o relatório no Power BI</h2>
+                    <p class="case-description">Navegue pelas páginas, troque o idioma, aplique filtros e explore os indicadores de vendas diretamente nesta página.</p>
+                </div>
+                <div class="powerbi-embed-shell">
+                    <div class="powerbi-embed">
+                        <iframe class="powerbi-frame" title="Oracle Sales BI interativo, dashboard de vendas bilíngue desenvolvido por Felipe Goulart" src="https://app.powerbi.com/view?r=eyJrIjoiZmU2MWRhZGEtMWJkMi00MmRhLTllMTYtYWFkNjE3NzBmNDVkIiwidCI6IjM0OTE4NDA0LTg0YjYtNDFlZC1iNjNkLTVhYzk3YjE0NjkwNCJ9" loading="lazy" allowfullscreen></iframe>
+                    </div>
+                    <div class="powerbi-embed-footer">
+                        <p>Use a navegação do relatório para acessar as páginas da análise e o seletor de idioma para alternar entre Português e Inglês.</p>
+                        <span class="powerbi-embed-status">Relatório interativo</span>
+                    </div>
+                </div>
+                <noscript>
+                    <p class="powerbi-noscript">O JavaScript precisa estar habilitado para visualizar o relatório interativo do Power BI.</p>
+                </noscript>
+            </div>
+        </section>
+
+        <section class="case-section case-section-soft" id="arquitetura">
+            <div class="container">
+                <div class="case-section-header">
+                    <span class="case-label">06 — Arquitetura</span>
+                    <h2 class="case-title">Do dado no Oracle à informação visual</h2>
+                    <p class="case-description">A construção seguiu um fluxo de preparação, modelagem, criação de métricas, visualização e publicação com atualização automática.</p>
+                </div>
+                <div class="architecture-flow">
+                    <article class="architecture-step">
+                        <span>Etapa 01</span>
+                        <h3>Oracle OCI</h3>
+                        <p>Vendas, clientes, produtos, canais, vendedores e metas.</p>
+                    </article>
+                    <span class="architecture-arrow" aria-hidden="true">→</span>
+                    <article class="architecture-step">
+                        <span>Etapa 02</span>
+                        <h3>Power Query</h3>
+                        <p>Tratamento dos dados e consulta da cotação PTAX do Banco Central.</p>
+                    </article>
+                    <span class="architecture-arrow" aria-hidden="true">→</span>
+                    <article class="architecture-step">
+                        <span>Etapa 03</span>
+                        <h3>Modelo e DAX</h3>
+                        <p>Tabela fato, dimensões, parâmetros de campo, grupos de cálculo e medidas.</p>
+                    </article>
+                    <span class="architecture-arrow" aria-hidden="true">→</span>
+                    <article class="architecture-step">
+                        <span>Etapa 04</span>
+                        <h3>Power BI Service</h3>
+                        <p>Publicação, gateway e atualização diária agendada.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="case-section" id="tecnologias">
+            <div class="container">
+                <div class="case-section-header">
+                    <span class="case-label">07 — Tecnologias</span>
+                    <h2 class="case-title">Ferramentas e competências aplicadas</h2>
+                    <p class="case-description">O projeto combina preparação de dados, modelagem, cálculos analíticos, visualização, localização e publicação.</p>
+                </div>
+                <div class="technology-grid">
+                    <article class="technology-card">
+                        <span class="technology-card-index">01</span>
+                        <h3>Power BI</h3>
+                        <p>Relatório de 10 páginas com indicadores, gráficos, mapas, tooltips, navegação e slicers dinâmicos.</p>
+                    </article>
+                    <article class="technology-card">
+                        <span class="technology-card-index">02</span>
+                        <h3>DAX</h3>
+                        <p>Variações e comparativos de período, meta proporcional, títulos dinâmicos e regras por status de venda.</p>
+                    </article>
+                    <article class="technology-card">
+                        <span class="technology-card-index">03</span>
+                        <h3>Power Query</h3>
+                        <p>Tratamento das fontes e consulta da cotação PTAX com a data no fuso de Brasília.</p>
+                    </article>
+                    <article class="technology-card">
+                        <span class="technology-card-index">04</span>
+                        <h3>SQL e Oracle</h3>
+                        <p>Origem dos dados e views de desempenho de vendedores usadas nas metas.</p>
+                    </article>
+                    <article class="technology-card">
+                        <span class="technology-card-index">05</span>
+                        <h3>Modelagem de dados</h3>
+                        <p>Modelo dimensional com fato no grão de item de pedido, dimensões e tabelas de apoio.</p>
+                    </article>
+                    <article class="technology-card">
+                        <span class="technology-card-index">06</span>
+                        <h3>Data visualization</h3>
+                        <p>Waterfall, Pareto, colunas e linhas combinadas, rosca, barras e mapa.</p>
+                    </article>
+                    <article class="technology-card">
+                        <span class="technology-card-index">07</span>
+                        <h3>UX para dashboards</h3>
+                        <p>Layout consistente, acabamento visual em padrão Figma e navegação entre páginas.</p>
+                    </article>
+                    <article class="technology-card">
+                        <span class="technology-card-index">08</span>
+                        <h3>Power BI Service</h3>
+                        <p>Publicação, gateway Enterprise e atualização diária agendada.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="case-section case-section-soft" id="localizacao">
+            <div class="container">
+                <div class="case-section-header">
+                    <span class="case-label">08 — Localização</span>
+                    <h2 class="case-title">Português e English (US), cada um com a sua moeda</h2>
+                    <p class="case-description">A localização vai além da tradução: o idioma define textos, dimensões, moeda e formatos em todas as páginas, a partir de um único modelo.</p>
+                </div>
+                <div class="localization-grid">
+                    <article class="localization-card">
+                        <div class="localization-language">
+                            <h3>Português</h3>
+                            <span class="language-code">PT-BR</span>
+                        </div>
+                        <ul>
+                            <li>Títulos, rótulos e filtros em Português.</li>
+                            <li>Valores em reais (BRL).</li>
+                            <li>Separadores decimais e de milhar brasileiros nos cartões de indicadores.</li>
+                            <li>Eixos e dimensões dinâmicos com nomes em Português.</li>
+                        </ul>
+                    </article>
+                    <article class="localization-card">
+                        <div class="localization-language">
+                            <h3>English</h3>
+                            <span class="language-code">EN-US</span>
+                        </div>
+                        <ul>
+                            <li>Titles, labels and filters in English.</li>
+                            <li>Values in US dollars (USD), converted with the PTAX rate of the sale date.</li>
+                            <li>US decimal and thousands separators on KPI cards.</li>
+                            <li>Dynamic axes and dimensions named in English.</li>
+                        </ul>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="case-section case-section-gradient" id="aprendizados">
+            <div class="container">
+                <div class="case-section-header">
+                    <span class="case-label">09 — Aprendizados</span>
+                    <h2 class="case-title">Competências fortalecidas durante o projeto</h2>
+                    <p class="case-description">O desenvolvimento envolveu decisões técnicas, analíticas e visuais que ampliaram a qualidade do resultado final.</p>
+                </div>
+                <div class="learning-list">
+                    <article class="learning-item">
+                        <span class="learning-number">01</span>
+                        <div>
+                            <h3>Localização é arquitetura, não tradução</h3>
+                            <p>Parâmetros de campo, catálogo de traduções e grupos de cálculo evitam duplicar páginas e mantêm o relatório único.</p>
+                        </div>
+                    </article>
+                    <article class="learning-item">
+                        <span class="learning-number">02</span>
+                        <div>
+                            <h3>Regras de negócio explícitas</h3>
+                            <p>Definir quais status entram em cada medida (faturado e entregue contra cancelado e devolvido) evita números diferentes para o mesmo conceito.</p>
+                        </div>
+                    </article>
+                    <article class="learning-item">
+                        <span class="learning-number">03</span>
+                        <div>
+                            <h3>Comparar períodos exige cuidado</h3>
+                            <p>Períodos parciais e de tamanhos diferentes pedem regras próprias, como o período comparável e a meta proporcional do mês em andamento.</p>
+                        </div>
+                    </article>
+                    <article class="learning-item">
+                        <span class="learning-number">04</span>
+                        <div>
+                            <h3>Governança do que é traduzido</h3>
+                            <p>Um catálogo de traduções com itens pendentes de revisão e detecção de textos duplicados facilita a manutenção dos dois idiomas.</p>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="case-section" id="evolucao">
+            <div class="container">
+                <div class="case-section-header">
+                    <span class="case-label">10 — Evolução</span>
+                    <h2 class="case-title">Possibilidades de expansão</h2>
+                    <p class="case-description">O projeto está concluído como estudo de caso, mas a arquitetura permite novas análises e funcionalidades.</p>
+                </div>
+                <div class="next-steps-list">
+                    <article class="next-step">
+                        <span class="next-step-marker" aria-hidden="true"></span>
+                        <div>
+                            <h3>Previsão de vendas</h3>
+                            <p>Projeção do faturamento com base no histórico e na sazonalidade.</p>
+                        </div>
+                    </article>
+                    <article class="next-step">
+                        <span class="next-step-marker" aria-hidden="true"></span>
+                        <div>
+                            <h3>Metas por produto e canal</h3>
+                            <p>Hoje as metas são por vendedor; o recorte pode ser ampliado para outras dimensões.</p>
+                        </div>
+                    </article>
+                    <article class="next-step">
+                        <span class="next-step-marker" aria-hidden="true"></span>
+                        <div>
+                            <h3>Alertas de desvio</h3>
+                            <p>Destaque automático de vendedores, equipes ou meses distantes da meta.</p>
+                        </div>
+                    </article>
+                    <article class="next-step">
+                        <span class="next-step-marker" aria-hidden="true"></span>
+                        <div>
+                            <h3>Novas moedas</h3>
+                            <p>Conversão cambial além de BRL e USD, com outras séries de câmbio.</p>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="project-call-to-action">
+            <div class="container">
+                <div class="project-call-to-action-box">
+                    <div class="project-call-to-action-content">
+                        <span class="case-label">Final do estudo de caso</span>
+                        <h2>Um único relatório para públicos em dois idiomas</h2>
+                        <p>O Oracle Sales BI reúne Oracle, SQL, Power Query, DAX, modelagem de dados e design de informação em uma solução de vendas completa e bilíngue.</p>
+                    </div>
+                    <div class="project-call-to-action-actions">
+                        <a class="button button-primary" href="../index.html#contato">Entrar em contato</a>
+                        <a class="button button-secondary" href="../index.html#projetos">Outros projetos</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="project-footer">
+        <div class="container project-footer-content">
+            <p>© 2026 Felipe Goulart. Todos os direitos reservados.</p>
+            <a href="../index.html">Voltar para a página inicial ↑</a>
+        </div>
+    </footer>
+</body>
+</html>
